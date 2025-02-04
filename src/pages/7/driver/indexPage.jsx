@@ -119,8 +119,8 @@ const IndexPage = () => {
 
     const handleDetailClick = (row) => {
         if (row.id_driver !== null) {
-          setDetailId(row.id_driver);
-          setCurrentView("detail");
+            setDetailId(row.id_driver);
+            setCurrentView("detail");
         }
     };
 
