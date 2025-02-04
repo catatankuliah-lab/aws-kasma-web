@@ -33,15 +33,16 @@ const IndexPage = () => {
             width: "50px",
         },
         {
-            name: "NIK",
-            selector: (row) => row.nik,
+            name: "Nama Customer",
+            selector: (row) => row.nama_customer,
             sortable: true,
             width: "200px",
         },
         {
-            name: "Nama Driver",
-            selector: (row) => row.nama_driver,
-            sortable: true
+            name: "Alamat Customer",
+            selector: (row) => row.alamat_customer,
+            sortable: true,
+            width: "200px",
         },
         {
             name: "",
@@ -79,7 +80,7 @@ const IndexPage = () => {
             navigate("/");
         }
         try {
-            const response = await axios.get(`http://localhost:3090/api/v1/driver`, {
+            const response = await axios.get(`http://localhost:3090/api/v1/customer`, {
                 headers: { Authorization: token },
                 params: { page, limit },
             });
@@ -105,8 +106,8 @@ const IndexPage = () => {
         // Filter data berdasarkan pencarian
         const filtered = data.filter(
             (item) =>
-                item.nik.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.nama_driver.toLowerCase().includes(searchTerm.toLowerCase())
+                item.alamat_customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.nama_customer.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredData(filtered);
     }, [searchTerm, data]);
@@ -144,7 +145,7 @@ const IndexPage = () => {
                             <div className="mb-3">
                                 <div className="divider text-start fw-bold">
                                     <div className="divider-text">
-                                        <span className="menu-header-text fs-6">Data Driver</span>
+                                        <span className="menu-header-text fs-6">Data Customer</span>
                                     </div>
                                 </div>
                             </div>
@@ -158,7 +159,7 @@ const IndexPage = () => {
                                 >
                                     disini
                                 </button>{" "}
-                                untuk menambahkan Driver.
+                                untuk menambahkan Customer.
                             </div>
                         </div>
                         {/* Input pencarian */}
@@ -166,7 +167,7 @@ const IndexPage = () => {
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Cari berdasarkan NIK atau Nama Driver..."
+                                placeholder="Cari berdasarkan Nama Customer..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
