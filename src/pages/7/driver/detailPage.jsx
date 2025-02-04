@@ -2,12 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
-import { useNavigate } from "react-router-dom";
 
 const DetailPage = ({ detailId, handleBackClick }) => {
     const inputRef = useRef(null);
-
-    const navigate = useNavigate();
 
     // Data dari localstorage
     const token = localStorage.getItem('token');
@@ -42,7 +39,6 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                         },
                     }
                 );
-                console.log(response.data.data);
                 setDriver(response.data.data);
             } catch (error) {
                 console.log(error);
@@ -52,7 +48,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         if (detailId) {
             fetchDriver();
         }
-    }, [detailId]);
+    }, [detailId, token]);
 
     // Update formData ketika driver berhasil di-fetch
     useEffect(() => {
@@ -88,52 +84,53 @@ const DetailPage = ({ detailId, handleBackClick }) => {
 
     const handleUpdate = async (event) => {
         event.preventDefault();
-        const dataToSubmit = {
-            ...formData,
-            id_role: 13,
-            username: formData.nama_lengkap.replace(/[\s,.`]/g, '').toLowerCase(),
-            password: formData.nama_lengkap.replace(/[\s,.`]/g, '').toLowerCase(),
-            status_user: "AKTIF",
-        };
-        await axios.put(`http://localhost:3090/api/v1/driver`, formDataInsert, {
+        const dataToSubmit = new FormData();
+        dataToSubmit.append('id_role', '13');
+        dataToSubmit.append('username', formData.nama_driver.replace(/[\s,.`]/g, '').toLowerCase());
+        dataToSubmit.append('password', formData.nama_driver.replace(/[\s,.`]/g, '').toLowerCase());
+        dataToSubmit.append('status_user', 'AKTIF');
+        await axios.put(`http://localhost:3090/api/v1/user/${formData.id_user}`, dataToSubmit, {
             headers: {
                 'Authorization': token,
                 'Content-Type': 'multipart/form-data',
             }
         });
-        // try {
-        //     let link = "januari";
-        //     if (selectedAlokasi.value == 1) {
-        //         link = "januari";
-        //     } else if (selectedAlokasi.value == 2) {
-        //         link = "februari";
-        //     } else {
-        //         link = "januari";
-        //     }
-        //     await axios.post(`http://localhost:3090/api/${link}-do`, formDataInsert, {
-        //         headers: {
-        //             'Authorization': token,
-        //             'Content-Type': 'multipart/form-data',
-        //         }
-        //     });
-        //     Swal.fire({
-        //         title: 'Data Doc Out',
-        //         text: 'Data Berhasil Ditambahkan',
-        //         icon: 'success',
-        //         showConfirmButton: false,
-        //         timer: 2000,
-        //     }).then(() => {
-        //         handleBackClick();
-        //     });
-        // } catch (error) {
-        //     console.error('Error submitting data:', error);
-        //     Swal.fire({
-        //         title: 'Error',
-        //         text: 'Gagal menambahkan data. Silakan coba lagi.',
-        //         icon: 'error',
-        //         showConfirmButton: true,
-        //     });
-        // }
+        const dataDriverToSubmit = new FormData();
+        dataDriverToSubmit.append('id_user', formData.id_user);
+        dataDriverToSubmit.append('nik', formData.nik);
+        dataDriverToSubmit.append('nama_driver', formData.nama_driver);
+        dataDriverToSubmit.append('telpon_driver', formData.telpon_driver);
+        dataDriverToSubmit.append('nama_kontak_darurat_driver', formData.nama_kontak_darurat_driver);
+        dataDriverToSubmit.append('telpon_kontak_darurat_driver', formData.telpon_kontak_darurat_driver);
+        dataDriverToSubmit.append('masa_berlaku_sim', formData.masa_berlaku_sim);
+        dataDriverToSubmit.append('foto_ktp_driver', 'foto_ktp_driver.png');
+        dataDriverToSubmit.append('foto_sim_driver', 'foto_sim_driver.png');
+        dataDriverToSubmit.append('status_driver', "TERSEDIA");
+        try {
+            await axios.put(`http://localhost:3090/api/v1/driver/${detailId}`, dataDriverToSubmit, {
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': 'multipart/form-data',
+                }
+            });
+            Swal.fire({
+                title: 'Data Driver',
+                text: 'Data Berhasil Diperbaharui',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 2000,
+            }).then(() => {
+                handleBackClick();
+            });
+        } catch (error) {
+            console.error('Error submitting data:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'Gagal menambahkan data. Silakan coba lagi.',
+                icon: 'error',
+                showConfirmButton: true,
+            });
+        }
     };
 
     return (
@@ -163,7 +160,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                 <div className="row">
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="nik" className="form-label">
-                            Nama Lengkap
+                            NIK
                         </label>
                         <input
                             className="form-control"
@@ -172,7 +169,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                             name="nik"
                             placeholder=""
                             ref={inputRef}
-                            value={driver?.nik}
+                            value={formData.nik}
                             onChange={handleChange}
                             required
                         />
@@ -187,7 +184,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                             id="nama_driver"
                             name="nama_driver"
                             placeholder="Nama Lengkap"
-                            value={driver?.nama_driver}
+                            value={formData.nama_driver}
                             onChange={handleChange}
                             required
                         />
@@ -202,7 +199,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                             id="telpon_driver"
                             name="telpon_driver"
                             placeholder="Telpon Driver"
-                            value={driver?.telpon_driver}
+                            value={formData.telpon_driver}
                             onChange={handleChange}
                             required
                         />
@@ -220,7 +217,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                             id="nama_kontak_darurat_driver"
                             name="nama_kontak_darurat_driver"
                             placeholder="Nama Kontak Darurat"
-                            value={driver?.nama_kontak_darurat_driver}
+                            value={formData.nama_kontak_darurat_driver}
                             onChange={handleChange}
                             required
                         />
@@ -238,7 +235,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                             id="telpon_kontak_darurat_driver"
                             name="telpon_kontak_darurat_driver"
                             placeholder="Telpon Kontak Darurat"
-                            value={driver?.telpon_kontak_darurat_driver}
+                            value={formData.telpon_kontak_darurat_driver}
                             onChange={handleChange}
                             required
                         />
@@ -256,7 +253,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                             id="masa_berlaku_sim"
                             name="masa_berlaku_sim"
                             placeholder=""
-                            value={driver?.masa_berlaku_sim}
+                            value={formData.masa_berlaku_sim}
                             onChange={handleChange}
                             required
                         />

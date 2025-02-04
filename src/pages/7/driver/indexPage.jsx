@@ -133,6 +133,7 @@ const IndexPage = () => {
 
     const handleBackClick = () => {
         setCurrentView("index");
+        loadData();
     };
 
     return (
