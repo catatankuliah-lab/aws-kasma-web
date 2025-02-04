@@ -1,0 +1,151 @@
+[{
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/1/dashboard",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "Purchase Order",
+        "items": [{
+            "text": "Purchase Order",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/1/po",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "Move (Gudang Langsir)",
+        "items": [{
+            "text": "Move (Gudang Langsir)",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/1/move",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "LO SJT",
+        "items": [{
+            "text": "LO SJT",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/1/losjt",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "Rekap Penyaluran",
+        "items": [{
+            "text": "Rekap Penyaluran",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/1/rekap",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "Dokumen",
+        "items": [{
+            "text": "Dokumen Penyaluran",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/1/dokumen",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/2/dashboard",
+            "roles": ["2"]
+        }]
+    },
+    {
+        "header": "Purchase Order",
+        "items": [{
+            "text": "Purchase Order",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/2/po",
+            "roles": ["2"]
+        }]
+    },
+    {
+        "header": "Move (Gudang Langsir)",
+        "items": [{
+            "text": "Move (Gudang Langsir)",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/2/move",
+            "roles": ["2"]
+        }]
+    },
+    {
+        "header": "LO SJT",
+        "items": [{
+            "text": "LO SJT",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/2/losjt",
+            "roles": ["2"]
+        }]
+    },
+    {
+        "header": "Rekap Penyaluran",
+        "items": [{
+            "text": "Rekap Penyaluran",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/2/rekap",
+            "roles": ["2"]
+        }]
+    },
+    {
+        "header": "Dokumen",
+        "items": [{
+            "text": "Dokumen Penyaluran",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/2/dokumen",
+            "roles": ["2"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/3/dashboard",
+            "roles": ["3"]
+        }]
+    },
+    {
+        "header": "Move (Gudang Langsir)",
+        "items": [{
+            "text": "Move (Gudang Langsir)",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/3/move",
+            "roles": ["3"]
+        }]
+    },
+    {
+        "header": "LO SJT",
+        "items": [{
+            "text": "LO SJT",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/3/losjt",
+            "roles": ["3"]
+        }]
+    }
+]
