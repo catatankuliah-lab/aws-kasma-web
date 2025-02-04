@@ -88,7 +88,19 @@ const DetailPage = ({ detailId, handleBackClick }) => {
 
     const handleUpdate = async (event) => {
         event.preventDefault();
-        console.log(formData);
+        const dataToSubmit = {
+            ...formData,
+            id_role: 13,
+            username: formData.nama_lengkap.replace(/[\s,.`]/g, '').toLowerCase(),
+            password: formData.nama_lengkap.replace(/[\s,.`]/g, '').toLowerCase(),
+            status_user: "AKTIF",
+        };
+        await axios.put(`http://localhost:3090/api/v1/driver`, formDataInsert, {
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'multipart/form-data',
+            }
+        });
         // try {
         //     let link = "januari";
         //     if (selectedAlokasi.value == 1) {
