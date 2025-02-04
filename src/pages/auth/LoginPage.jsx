@@ -21,24 +21,17 @@ const LoginPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3089/api/v1/login', formData);
+            const response = await axios.post('http://localhost:3090/api/v1/login', formData);
+            console.log(response.data);
             const id_role = response.data.data.id_role;
             const id_user = response.data.data.id_user;
-            const id_kantor = response.data.data.id_kantor;
-            const id_gudang = response.data.data.id_gudang;
-            const nama_kantor = response.data.data.nama_kantor;
-            const nama_gudang = response.data.data.nama_gudang;
             const token = response.data.token;
             localStorage.setItem('id_role', id_role);
             localStorage.setItem('id_user', id_user);
-            localStorage.setItem('id_kantor', id_kantor);
-            localStorage.setItem('id_gudang', id_gudang);
-            localStorage.setItem('nama_kantor', nama_kantor);
-            localStorage.setItem('nama_gudang', nama_gudang);
             localStorage.setItem('token', token);
             Swal.fire({
                 title: 'Login',
-                text: `Login Berhasil, selamat datang ${response.data.data.nama_user}`,
+                text: `Login Berhasil, selamat datang ${response.data.data.nama_role}`,
                 icon: 'success',
                 showConfirmButton: false,
                 timer: 2000,
@@ -67,7 +60,7 @@ const LoginPage = () => {
     return (
         <AuthWrapper>
             <h4 className="mb-2">Login !</h4>
-            <p className="mt-3">Sistem Infomasi Bantuan Pangan 2025</p>
+            <p className="mt-3">Sistem Infomasi Operasional</p>
             <p className="mb-4 fw-bold" style={{ marginTop: "-10px" }} ><span style={{ color: "rgb(233,80,28)" }}>PT Delapan Delapan</span> <span style={{ color: "rgb(8,96,237)" }}> Logistics</span></p>
             <form className="mb-3">
                 <div className="mb-3">
