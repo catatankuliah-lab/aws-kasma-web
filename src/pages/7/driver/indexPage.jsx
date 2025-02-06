@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
-import AddPage from "./AddPage";
+import AddPage from "./addPage";
 import DetailPage from "./detailPage";
 import { useNavigate } from "react-router-dom";
 
