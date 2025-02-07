@@ -1,0 +1,49 @@
+[
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/7/dashboard",
+            "roles": ["7"]
+        }]
+    },
+    {
+        "header": "Driver",
+        "items": [{
+            "text": "Driver",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/7/driver",
+            "roles": ["7"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/12/dashboard",
+            "roles": ["12"]
+        }]
+    },
+    {
+        "header": "Armada dan Maintenece",
+        "items": [{
+            "text": "Armada",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/12/armada",
+            "roles": ["12"]
+        },
+        {
+            "text": "Checkup Armada",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/12/checkup",
+            "roles": ["12"]
+        }]
+    }
+]
