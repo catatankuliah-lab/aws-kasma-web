@@ -174,45 +174,25 @@
             "text": "Dashboard",
             "icon": "bx bx-home",
             "available": true,
-            "link": "/9/dashboard",
-            "roles": ["9"]
+            "link": "/12/dashboard",
+            "roles": ["12"]
         }]
     },
     {
-        "header": "PO",
-        "items": [{
-            "text": "Customer",
-            "icon": "bx bx-file",
-            "available": true,
-            "link": "/9/customer",
-            "roles": ["9"]
-        }]
-    },
-    {
+        "header": "Armada dan Maintenece",
         "items": [{
             "text": "Armada",
             "icon": "bx bx-file",
             "available": true,
-            "link": "/9/armada",
-            "roles": ["9"]
-        }]
-    },
-    {
-        "items": [{
-            "text": "Driver",
+            "link": "/12/armada",
+            "roles": ["12"]
+        },
+        {
+            "text": "Checkup Armada",
             "icon": "bx bx-file",
             "available": true,
-            "link": "/9/driver",
-            "roles": ["9"]
-        }]
-    },
-    {
-        "items": [{
-            "text": "PO",
-            "icon": "bx bx-file",
-            "available": true,
-            "link": "/9/po",
-            "roles": ["9"]
+            "link": "/12/checkup",
+            "roles": ["12"]
         }]
     }
 ]
