@@ -5,7 +5,11 @@ import LoginPage from "../pages/auth/LoginPage";
 
 import Role7Driver from "../pages/7/driver/indexPage";
 import Role9PO from "../pages/9/po/indexPage";
+<<<<<<< HEAD
 import Role9Customer from "../pages/9/customer/indexPage";
+=======
+import Role9Driver from "../pages/9/driver/indexPage";
+>>>>>>> nana
 
 const AppRoutes = () => {
     const id_role = localStorage.getItem('id_role');
@@ -25,6 +29,7 @@ const AppRoutes = () => {
                     <Route path="/9/po" element={<Role9PO />} />
                     <Route path="/9/customer" element={<Role9Customer />} />
                     <Route path="/9/armada" element={<Role9PO />} />
+                    <Route path="/9/driver" element={<Role9Driver />} />
                 </>
             )}
             <Route path="*" element={<MaintenancePage />} />
