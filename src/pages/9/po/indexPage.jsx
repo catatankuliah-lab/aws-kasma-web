@@ -33,15 +33,40 @@ const IndexPage = () => {
             width: "50px",
         },
         {
-            name: "NIK",
+            name: "Nomor PO",
             selector: (row) => row.nik,
             sortable: true,
             width: "200px",
         },
         {
-            name: "Nama Driver",
+            name: "Tanggal PO",
+            selector: (row) => row.nik,
+            sortable: true,
+            width: "200px",
+        },
+        {
+            name: "Jam Stanby dan Muat",
+            selector: (row) => `${row.nik} | ${row.nik}`,
+            sortable: true,
+            width: "200px",
+        },
+        {
+            name: "Customer",
             selector: (row) => row.nama_driver,
-            sortable: true
+            sortable: true,
+            width: "200px",
+        },
+        {
+            name: "Origin to Destination",
+            selector: (row) => `${row.nama_driver} to ${row.nama_driver}`,
+            sortable: true,
+            width: "200px",
+        },
+        {
+            name: "Status PO",
+            selector: (row) => row.nama_driver,
+            sortable: true,
+            width: "200px",
         },
         {
             name: "",
@@ -99,6 +124,7 @@ const IndexPage = () => {
 
     useEffect(() => {
         loadData(currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, limit]);
 
     useEffect(() => {
@@ -144,7 +170,7 @@ const IndexPage = () => {
                             <div className="mb-3">
                                 <div className="divider text-start fw-bold">
                                     <div className="divider-text">
-                                        <span className="menu-header-text fs-6">Data Driver</span>
+                                        <span className="menu-header-text fs-6">Data Purchase Order</span>
                                     </div>
                                 </div>
                             </div>
@@ -158,7 +184,7 @@ const IndexPage = () => {
                                 >
                                     disini
                                 </button>{" "}
-                                untuk menambahkan Driver.
+                                untuk menambahkan Purchase Order.
                             </div>
                         </div>
                         {/* Input pencarian */}

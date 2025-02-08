@@ -1,28 +1,158 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import Select from 'react-select';
 
 const AddPage = ({ handleBackClick }) => {
 
     const token = localStorage.getItem('token');
 
+    const [origin, setOrigin] = useState("");
+    const [nomorPO, setNomoerPO] = useState("");
+
+    const [customerOption, setCustomerOption] = useState([]);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const handleCustomerChange = async (selectedOption) => {
+        setSelectedCustomer(selectedOption);
+        setOrigin(selectedOption.alamat);
+    };
+
+    const [armadaOption, setArmadaOption] = useState([]);
+    const [selectedArmada, setSelectedArmada] = useState(null);
+    const handleArmadaChange = async (selectedOption) => {
+        setSelectedArmada(selectedOption);
+    };
+
+    const [driverOption, setDriverOption] = useState([]);
+    const [selectedDriver, setSelectedDriver] = useState(null);
+    const handleDriverChange = async (selectedOption) => {
+        setSelectedDriver(selectedOption);
+    };
+
     const [formData, setFormData] = useState({
-        id_role: "",
-        username: "",
-        password: "",
-        status_user: "",
-        id_user: "",
-        nik: "",
-        nama_driver: "",
-        telpon_driver: "",
-        nama_kontak_darurat_driver: "",
-        telpon_kontak_darurat_driver: "",
-        masa_berlaku_sim: "",
-        foto_ktp_driver: "",
-        foto_sim_driver: "",
-        status_driver: ""
+        nomor_po : "",
+        tanggal_po : "",
+        jam_pemesanan_po : "",
+        jam_muat : "",
+        id_customer : "",
+        id_armada : "",
+        id_driver : "",
+        destination : "",
+        status_po: "PROSES KAS JALAN"
     });
+
+    const fetchCustomer = async () => {
+        try {
+            const response = await axios.get('http://localhost:3090/api/v1/customer', {
+                headers: {
+                    Authorization: token
+                }
+            });
+            if (response.data.data.length != 0) {
+                const datafetch = response.data.data.map(dataitem => ({
+                    value: dataitem.id_customer,
+                    label: dataitem.nama_customer,
+                    alamat: dataitem.alamat_customer,
+                }));
+                setCustomerOption(datafetch);
+            } else {
+                setCustomerOption([]);
+            }
+        } catch (error) {
+            console.log(error);
+            setCustomerOption([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchCustomer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const fetchArmada = async () => {
+        try {
+            const response = await axios.get('http://localhost:3090/api/v1/armada', {
+                headers: {
+                    Authorization: token
+                }
+            });
+            if (response.data.data.length != 0) {
+                const datafetch = response.data.data.map(dataitem => ({
+                    value: dataitem.id_armada,
+                    label: dataitem.nopol_armada + ' (' + dataitem.nama_jenis_kendaraan+')'
+                }));
+                setArmadaOption(datafetch);
+            } else {
+                setArmadaOption([]);
+            }
+        } catch (error) {
+            console.log(error);
+            setArmadaOption([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchArmada();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const fetchDriver = async () => {
+        try {
+            const response = await axios.get('http://localhost:3090/api/v1/driver', {
+                headers: {
+                    Authorization: token
+                }
+            });
+            if (response.data.data.length != 0) {
+                const datafetch = response.data.data.map(dataitem => ({
+                    value: dataitem.id_driver,
+                    label: dataitem.nama_driver
+                }));
+                setDriverOption(datafetch);
+            } else {
+                setDriverOption([]);
+            }
+        } catch (error) {
+            console.log(error);
+            setDriverOption([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchDriver();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const fetchJumlahPO = async () => {
+        try {
+            const bulanSekarang = new Date().getMonth() + 1;
+            const bulanFormatted = String(bulanSekarang).padStart(2, "0");
+            const tahunSekarang = new Date().getFullYear();
+            const response = await axios.get(`http://localhost:3090/api/v1/po/jumlahpobulanan/${bulanSekarang}`, {
+                headers: {
+                    Authorization: token
+                }
+            });
+            let nomor = "";
+            if (response.data.jumlahPO<10) {
+                nomor = `00${response.data.jumlahPO + 1}`
+            } else if (response.data.jumlahPO < 100) {
+                nomor = `0${response.data.jumlahPO + 1}`
+            } else {
+                nomor = `${response.data.jumlahPO + 1}`
+            }
+            setNomoerPO(`88LOG-PO${bulanFormatted}${tahunSekarang}-${nomor}`);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchJumlahPO();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,48 +166,25 @@ const AddPage = ({ handleBackClick }) => {
         event.preventDefault();
         const dataToSubmit = {
             ...formData,
-            id_role: 13,
-            username: formData.nama_lengkap.replace(/[\s,.`]/g, '').toLowerCase(),
-            password: formData.nama_lengkap.replace(/[\s,.`]/g, '').toLowerCase(),
-            status_user: "AKTIF",
+            id_armada: selectedArmada.value,
+            id_customer: selectedArmada.value,
+            id_driver: selectedArmada.value,
+            nomor_po: nomorPO
         };
+        console.log(dataToSubmit);
         try {
-            const response = await axios.post(`http://localhost:3090/api/v1/user`, dataToSubmit, {
+            await axios.post(`http://localhost:3090/api/v1/po`, dataToSubmit, {
                 headers: {
                     Authorization: token
                 }
             });
             Swal.fire({
-                title: 'Data Driver',
+                title: 'Data PO',
                 text: 'Data Berhasil Ditambahkan',
                 icon: 'success',
                 showConfirmButton: false,
                 timer: 2000,
             }).then(() => {
-                const dataToSubmitDriver = {
-                    ...formData,
-                    id_user: response.data.data.id_user,
-                    nik: formData.nik,
-                    nama_driver: formData.nama_lengkap,
-                    telpon_driver: formData.telpon_driver,
-                    nama_kontak_darurat_driver:
-                        formData.nama_kontak_darurat_driver,
-                    telpon_kontak_darurat_driver:
-                        formData.telpon_kontak_darurat_driver,
-                    masa_berlaku_sim: formData.masa_berlaku_sim,
-                    foto_ktp_driver: formData.foto_ktp_driver,
-                    foto_sim_driver: formData.foto_sim_driver,
-                    status_driver: "TERSEDIA",
-                };
-                axios.post(
-                    `http://localhost:3090/api/v1/driver`,
-                    dataToSubmitDriver,
-                    {
-                        headers: {
-                        Authorization: token,
-                        },
-                    }
-                );
                 handleBackClick();
             });
         } catch (error) {
@@ -97,54 +204,82 @@ const AddPage = ({ handleBackClick }) => {
                 <div className="mb-3">
                     <div className="divider text-start fw-bold">
                         <div className="divider-text">
-                            <span className="menu-header-text fs-6">Tambah Driver</span>
+                            <span className="menu-header-text fs-6">Tambah Purchase Order</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="col-lg-12">
                 <div className="">
-                    Klik <button className="fw-bold btn btn-link p-0" onClick={() => handleBackClick()}>disini</button> untuk kembali ke menu utama Driver.
+                    Klik <button className="fw-bold btn btn-link p-0" onClick={() => handleBackClick()}>disini</button> untuk kembali ke menu utama Purchase Order.
                 </div>
             </div>
             <div className="col-md-12 mt-3">
                 <form id="form" onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="nik" className="form-label">NIK</label>
-                            <input className="form-control" type="text" id="nik" name='nik' placeholder="NIK" onChange={handleChange} required />
+                            <label htmlFor="nomor_po" className="form-label">Nomor PO</label>
+                            <input className="form-control" type="text" id="nomor_po" name='nomor_po' placeholder="88LOG-PO0000-000" onChange={handleChange} required readOnly value={nomorPO || ""} />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="nama_lengkap" className="form-label">Nama Lengkap</label>
-                            <input className="form-control" type="text" id="nama_lengkap" name='nama_lengkap' placeholder="Nama Lengkap" onChange={handleChange} required />
+                            <label htmlFor="tanggal_po" className="form-label">Tanggal PO</label>
+                            <input className="form-control text-uppercase" type="date" id="tanggal_po" name='tanggal_po' placeholder="" onChange={handleChange} required />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="telpon_driver" className="form-label">Telpon Driver</label>
-                            <input className="form-control" type="number" id="telpon_driver" name='telpon_driver' placeholder="Telpon Driver" onChange={handleChange} required />
+                            <label htmlFor="jam_pemesanan_po" className="form-label">Jam Stanby</label>
+                            <input className="form-control" type="time" id="jam_pemesanan_po" name='jam_pemesanan_po' onChange={handleChange} required />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="nama_kontak_darurat_driver" className="form-label">Nama Kontak Darurat</label>
-                            <input className="form-control" type="text" id="nama_kontak_darurat_driver" name='nama_kontak_darurat_driver' placeholder="Nama Kontak Darurat" onChange={handleChange} required />
+                            <label htmlFor="jam_muat" className="form-label">Jam Muat</label>
+                            <input className="form-control" type="time" id="jam_muat" name='jam_muat' onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                            <label htmlFor="id_customer" className="form-label">Customer</label>
+                            <Select
+                                id="id_customer"
+                                name="id_customer"
+                                value={selectedCustomer}
+                                onChange={handleCustomerChange}
+                                options={customerOption}
+                                placeholder="Pilih Customer"
+                                required
+                            />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="telpon_kontak_darurat_driver" className="form-label">Telpon Kontak Darurat</label>
-                            <input className="form-control" type="number" id="telpon_kontak_darurat_driver" name='telpon_kontak_darurat_driver' placeholder="Telpon Kontak Darurat" onChange={handleChange} required />
+                            <label htmlFor="telpon_kontak_darurat_driver" className="form-label">Origin</label>
+                            <input className="form-control text-uppercase" type="text" readOnly value={origin} />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="masa_berlaku_sim" className="form-label">Berkalu SIM</label>
-                            <input className="form-control text-uppercase" type="date" id="masa_berlaku_sim" name='masa_berlaku_sim' placeholder="" onChange={handleChange} required />
+                            <label htmlFor="destination" className="form-label">Destination</label>
+                            <input className="form-control" type="text" id="destination" name='destination' placeholder="" onChange={handleChange} required />
                         </div>
-                        <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="foto_ktp_driver" className="form-label">Foto KTP</label>
-                            <input className="form-control" type="file" id="foto_ktp_driver" name='foto_ktp_driver' placeholder="" onChange={handleChange} required />
+                        <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                            <label htmlFor="id_armada" className="form-label">Armada</label>
+                            <Select
+                                id="id_armada"
+                                name="id_armada"
+                                value={selectedArmada}
+                                onChange={handleArmadaChange}
+                                options={armadaOption}
+                                placeholder="Pilih Armada"
+                                required
+                            />
                         </div>
-                        <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="foto_sim_driver" className="form-label">Foto SIM</label>
-                            <input className="form-control" type="file" id="foto_sim_driver" name='foto_sim_driver' placeholder="" onChange={handleChange} required />
+                        <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                            <label htmlFor="id_driver" className="form-label">Driver</label>
+                            <Select
+                                id="id_driver"
+                                name="id_driver"
+                                value={selectedDriver}
+                                onChange={handleDriverChange}
+                                options={driverOption}
+                                placeholder="Pilih Driver"
+                                required
+                            />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
                             <label htmlFor="" className="form-label">Proses</label>
-                            <button type="submit" className="btn btn-primary w-100">SELANJUTNYA</button>
+                            <button type="submit" className="btn btn-primary w-100">SIPAN DATA</button>
                         </div>
                     </div>
                 </form>
