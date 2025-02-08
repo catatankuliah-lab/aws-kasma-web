@@ -1,27 +1,29 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import Select from 'react-select';
+import { useNavigate } from 'react-router-dom';
 
 const AddPage = ({ handleBackClick }) => {
 
     const token = localStorage.getItem('token');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/');
+        }
+    }, [navigate]);
+    const [jeniskendaraanOption, setJenisKendaraanOption] = useState([]);
+    const [selectedJenisKendaraan, setSelectedJenisKendaraan] = useState(null);
+
 
     const [formData, setFormData] = useState({
-        id_role: "",
-        username: "",
-        password: "",
-        status_user: "",
-        id_user: "",
-        nik: "",
-        nama_driver: "",
-        telpon_driver: "",
-        nama_kontak_darurat_driver: "",
-        telpon_kontak_darurat_driver: "",
-        masa_berlaku_sim: "",
-        foto_ktp_driver: "",
-        foto_sim_driver: "",
-        status_driver: ""
+        id_jenis_kendaraan: "",
+        nopol_armada: "",
+        lokasi_terakhir: "",
+        status_armada: ""
     });
 
     const handleChange = (e) => {
@@ -32,52 +34,75 @@ const AddPage = ({ handleBackClick }) => {
         });
     };
 
+    const fetchJenisKendaraan = async () => {
+        if (!token) {
+            navigate('/');
+        }
+        try {
+            const response = await axios.get('http://localhost:3090/api/v1/jenis-kendaraan', {
+                headers: {
+                    Authorization: token
+                }
+            });
+            console.log(response);
+            if (response.data.data.length !== 0) {
+                const datafetch = response.data.data.map(dataitem => ({
+                    value: dataitem.id_jenis_kendaraan,
+                    label: dataitem.nama_jenis_kendaraan
+                }));
+                setJenisKendaraanOption(datafetch);
+            } else {
+                setJenisKendaraanOption([]);
+            }
+        } catch (error) {
+            console.log(error);
+            Swal.fire({
+                title: 'Data Jenis Kendaraan',
+                text: 'Data Jenis Kendaraan Tidak Ditemukan',
+                icon: 'error',
+                showConfirmButton: false,
+                timer: 2000,
+                position: 'center',
+                timerProgressBar: true
+            });
+            setJenisKendaraanOption([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchJenisKendaraan();
+    }, [token]);
+
+    const handleJenisKendaraanChange = (selectedOption) => {
+        setSelectedJenisKendaraan(selectedOption);
+        setJenisKendaraanInit(selectedOption.value);
+        setFormFilter((prevState) => ({
+            ...prevState,
+            id_jenis_kendaraan: selectedOption ? selectedOption.value : null
+        }));
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const dataToSubmit = {
             ...formData,
-            id_role: 13,
-            username: formData.nama_lengkap.replace(/[\s,.`]/g, '').toLowerCase(),
-            password: formData.nama_lengkap.replace(/[\s,.`]/g, '').toLowerCase(),
-            status_user: "AKTIF",
+            id_jenis_kendaraan: selectedJenisKendaraan.value,
+            status_armada: "TERSEDIA",
         };
         try {
-            const response = await axios.post(`http://localhost:3090/api/v1/user`, dataToSubmit, {
+            console.log(dataToSubmit);
+            const response = await axios.post(`http://localhost:3090/api/v1/armada`, dataToSubmit, {
                 headers: {
                     Authorization: token
                 }
             });
             Swal.fire({
-                title: 'Data Driver',
+                title: 'Data Customer',
                 text: 'Data Berhasil Ditambahkan',
                 icon: 'success',
                 showConfirmButton: false,
                 timer: 2000,
             }).then(() => {
-                const dataToSubmitDriver = {
-                    ...formData,
-                    id_user: response.data.data.id_user,
-                    nik: formData.nik,
-                    nama_driver: formData.nama_lengkap,
-                    telpon_driver: formData.telpon_driver,
-                    nama_kontak_darurat_driver:
-                        formData.nama_kontak_darurat_driver,
-                    telpon_kontak_darurat_driver:
-                        formData.telpon_kontak_darurat_driver,
-                    masa_berlaku_sim: formData.masa_berlaku_sim,
-                    foto_ktp_driver: formData.foto_ktp_driver,
-                    foto_sim_driver: formData.foto_sim_driver,
-                    status_driver: "TERSEDIA",
-                };
-                axios.post(
-                    `http://localhost:3090/api/v1/driver`,
-                    dataToSubmitDriver,
-                    {
-                        headers: {
-                        Authorization: token,
-                        },
-                    }
-                );
                 handleBackClick();
             });
         } catch (error) {
@@ -97,50 +122,32 @@ const AddPage = ({ handleBackClick }) => {
                 <div className="mb-3">
                     <div className="divider text-start fw-bold">
                         <div className="divider-text">
-                            <span className="menu-header-text fs-6">Tambah Driver</span>
+                            <span className="menu-header-text fs-6">Tambah Armada</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="col-lg-12">
                 <div className="">
-                    Klik <button className="fw-bold btn btn-link p-0" onClick={() => handleBackClick()}>disini</button> untuk kembali ke menu utama Driver.
+                    Klik <button className="fw-bold btn btn-link p-0" onClick={() => handleBackClick()}>disini</button> untuk kembali ke menu utama Armada.
                 </div>
             </div>
+        
             <div className="col-md-12 mt-3">
                 <form id="form" onSubmit={handleSubmit}>
                     <div className="row">
-                        <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="nik" className="form-label">NIK</label>
-                            <input className="form-control" type="text" id="nik" name='nik' placeholder="NIK" onChange={handleChange} required />
+                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                            <label htmlFor="id_jenis_kendaraan" className="form-label">Jenis Kendaraan</label>
+                            <Select id="id_jenis_kendaraan" name="id_jenis_kendaraan" value={selectedJenisKendaraan} onChange={handleJenisKendaraanChange} options={jeniskendaraanOption} placeholder="Pilih Jenis Kendaraan"
+                            />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="nama_lengkap" className="form-label">Nama Lengkap</label>
-                            <input className="form-control" type="text" id="nama_lengkap" name='nama_lengkap' placeholder="Nama Lengkap" onChange={handleChange} required />
+                            <label htmlFor="nopol_armada" className="form-label">Nopol Armada</label>
+                            <input className="form-control" type="text" id="nopol_armada" name='nopol_armada' placeholder="Nopol Armada" onChange={handleChange} required />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="telpon_driver" className="form-label">Telpon Driver</label>
-                            <input className="form-control" type="number" id="telpon_driver" name='telpon_driver' placeholder="Telpon Driver" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="nama_kontak_darurat_driver" className="form-label">Nama Kontak Darurat</label>
-                            <input className="form-control" type="text" id="nama_kontak_darurat_driver" name='nama_kontak_darurat_driver' placeholder="Nama Kontak Darurat" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="telpon_kontak_darurat_driver" className="form-label">Telpon Kontak Darurat</label>
-                            <input className="form-control" type="number" id="telpon_kontak_darurat_driver" name='telpon_kontak_darurat_driver' placeholder="Telpon Kontak Darurat" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="masa_berlaku_sim" className="form-label">Berkalu SIM</label>
-                            <input className="form-control text-uppercase" type="date" id="masa_berlaku_sim" name='masa_berlaku_sim' placeholder="" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="foto_ktp_driver" className="form-label">Foto KTP</label>
-                            <input className="form-control" type="file" id="foto_ktp_driver" name='foto_ktp_driver' placeholder="" onChange={handleChange} required />
-                        </div>
-                        <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="foto_sim_driver" className="form-label">Foto SIM</label>
-                            <input className="form-control" type="file" id="foto_sim_driver" name='foto_sim_driver' placeholder="" onChange={handleChange} required />
+                            <label htmlFor="lokasi_terakhir" className="form-label">Lokasi Terakhir</label>
+                            <input className="form-control" type="text" id="lokasi_terakhir" name='lokasi_terakhir' placeholder="Lokasi Terakhir" onChange={handleChange} required />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
                             <label htmlFor="" className="form-label">Proses</label>

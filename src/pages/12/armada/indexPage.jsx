@@ -14,6 +14,9 @@ const IndexPage = () => {
             navigate("/");
         }
     }, [navigate, token]);
+    const jeniskendaraanInit = (id) => {
+        console.log("Jenis kendaraan dipilih:", id);
+    };    
 
     const [currentView, setCurrentView] = useState("index");
     const [detailId, setDetailId] = useState(null);
@@ -126,11 +129,13 @@ const IndexPage = () => {
     const handleAddClick = () => setCurrentView("add");
 
     const handleDetailClick = (row) => {
-        if (row.id_driver !== null) {
-            setDetailId(row.id_driver);
+        if (row.id_armada !== null) {
+            setDetailId(row.id_armada);
             setCurrentView("detail");
+            jeniskendaraanInit(row.id_jenis_kendaraan); // Inisialisasi jenis kendaraan
         }
     };
+    
 
     const handlePageChanges = (page, id = null) => {
         if (id !== null) {
@@ -210,6 +215,7 @@ const IndexPage = () => {
                 <DetailPage
                     handlePageChanges={handlePageChanges}
                     detailId={detailId}
+                    jeniskendaraanInit={jeniskendaraanInit}
                     handleBackClick={handleBackClick}
                 />
             )}
