@@ -33,6 +33,9 @@ const IndexPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRecords, setTotalRecords] = useState(0);
     const [limit, setLimit] = useState(10);
+    const [idCustomerInit, setIdCustomerInit] = useState(0);
+    const [idArmadaInit, setIdArmadaInit] = useState(0);
+    const [idDriverInit, setIdDriverInit] = useState(0);
 
     const columns = [
         {
@@ -192,8 +195,11 @@ const IndexPage = () => {
     const handleAddClick = () => setCurrentView("add");
 
     const handleDetailClick = (row) => {
-        if (row.id_driver !== null) {
+        if (row !== null) {
             setDetailId(row.id_po);
+            setIdCustomerInit(row.id_customer);
+            setIdArmadaInit(row.id_armada);
+            setIdDriverInit(row.id_driver);
             setCurrentView("detail");
         }
     };
@@ -357,8 +363,10 @@ const IndexPage = () => {
             )}
             {currentView === "detail" && (
                 <DetailPage
-                    handlePageChanges={handlePageChanges}
                     detailId={detailId}
+                    idCustomerInit={idCustomerInit}
+                    idArmadaInit={idArmadaInit}
+                    idDriverInit={idDriverInit}
                     handleBackClick={handleBackClick}
                 />
             )}

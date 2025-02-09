@@ -14,6 +14,7 @@ const IndexPage = () => {
             navigate("/");
         }
     }, [navigate, token]);
+    
     const jeniskendaraanInit = (id) => {
         console.log("Jenis kendaraan dipilih:", id);
     };    

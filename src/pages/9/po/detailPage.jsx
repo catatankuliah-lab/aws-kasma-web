@@ -1,18 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import Select from 'react-select';
 import Swal from 'sweetalert2';
-import { useNavigate } from "react-router-dom";
 
-const DetailPage = ({ detailId, handleBackClick }) => {
-    const inputRef = useRef(null);
-
-    const navigate = useNavigate();
-
-    // Data dari localstorage
+const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handleBackClick }) => {
     const token = localStorage.getItem('token');
-
-    const [driver, setDriver] = useState(null);
 
     const [formData, setFormData] = useState({
         nomor_po: "",
@@ -26,49 +19,228 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         status_po: ""
     });
 
+    const [formDataReguler, setFormDataReguler] = useState({
+        jarak_isi: "",
+        jarak_kosong: "",
+        jam_tunggu: "",
+        gaji_driver: "",
+        e_toll: "",
+        keterangan_rute: "",
+        tonase: ""
+    });
+
+    const [formDataKosongan, setFormDataKosongan] = useState({
+        jarak_isi: "",
+        jarak_kosong: "",
+        jam_tunggu: "",
+        gaji_driver: "",
+        e_toll: "",
+        keterangan_rute: "",
+        tonase: "",
+        status_kas_jalan: ""
+    });
+
+    const [po, setPO] = useState(null);
+
+    const [customerOption, setCustomerOption] = useState([]);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [origin, setOrigin] = useState("");
     useEffect(() => {
-        const fetchDriver = async () => {
+        const fetchCustomer = async () => {
             try {
-                const response = await axios.get( `http://localhost:3090/api/v1/driver/${detailId}`,
+                const response = await axios.get('http://localhost:3090/api/v1/customer', {
+                    headers: {
+                        Authorization: token
+                    }
+                });
+                if (response.data.data.length != 0) {
+                    const datafetch = response.data.data.map(dataitem => ({
+                        value: dataitem.id_customer,
+                        label: dataitem.nama_customer,
+                        alamat: dataitem.alamat_customer,
+                    }));
+                    setCustomerOption(datafetch);
+                } else {
+                    setCustomerOption([]);
+                }
+            } catch (error) {
+                console.log(error);
+                setCustomerOption([]);
+            }
+        };
+        fetchCustomer();
+    }, [token]);
+
+    useEffect(() => {
+        if (customerOption.length > 0 && idCustomerInit) {
+            const initialValue = customerOption.find(option => option.value === idCustomerInit) || null;
+            setSelectedCustomer(initialValue);
+            setOrigin(initialValue.alamat);
+        }
+    }, [customerOption, idCustomerInit]);
+
+    const handleCustomerChange = async (selectedOption) => {
+        setSelectedCustomer(selectedOption);
+        setOrigin(selectedOption.alamat);
+    };
+
+    const [armadaOption, setArmadaOption] = useState([]);
+    const [selectedArmada, setSelectedArmada] = useState(null);
+    useEffect(() => {
+        const fetchArmada = async () => {
+            try {
+                const response = await axios.get('http://localhost:3090/api/v1/armada', {
+                    headers: {
+                        Authorization: token
+                    }
+                });
+                if (response.data.data.length != 0) {
+                    const datafetch = response.data.data.map(dataitem => ({
+                        value: dataitem.id_armada,
+                        label: dataitem.nopol_armada + ' (' + dataitem.nama_jenis_kendaraan + ')'
+                    }));
+                    setArmadaOption(datafetch);
+                } else {
+                    setArmadaOption([]);
+                }
+            } catch (error) {
+                console.log(error);
+                setArmadaOption([]);
+            }
+        };
+        fetchArmada();
+    }, [token]);
+    useEffect(() => {
+        if (armadaOption.length > 0 && idArmadaInit) {
+            const initialValue = armadaOption.find(option => option.value === idArmadaInit) || null;
+            setSelectedArmada(initialValue);
+        }
+    }, [armadaOption, idArmadaInit]);
+    const handleArmadaChange = async (selectedOption) => {
+        setSelectedArmada(selectedOption);
+    };
+
+    const [driverOption, setDriverOption] = useState([]);
+    const [selectedDriver, setSelectedDriver] = useState(null);
+    useEffect(() => {
+        const fetchArmada = async () => {
+            try {
+                const response = await axios.get('http://localhost:3090/api/v1/driver', {
+                    headers: {
+                        Authorization: token
+                    }
+                });
+                if (response.data.data.length != 0) {
+                    const datafetch = response.data.data.map(dataitem => ({
+                        value: dataitem.id_driver,
+                        label: dataitem.nama_driver
+                    }));
+                    setDriverOption(datafetch);
+                } else {
+                    setDriverOption([]);
+                }
+            } catch (error) {
+                console.log(error);
+                setDriverOption([]);
+            }
+        };
+        fetchArmada();
+    }, [token]);
+    useEffect(() => {
+        if (driverOption.length > 0 && idDriverInit) {
+            const initialValue = driverOption.find(option => option.value === idDriverInit) || null;
+            setSelectedDriver(initialValue);
+        }
+    }, [driverOption, idDriverInit]);
+    const handleDriverChange = async (selectedOption) => {
+        setSelectedDriver(selectedOption);
+    };
+
+    useEffect(() => {
+        const fetchPO = async () => {
+            try {
+                const response = await axios.get( `http://localhost:3090/api/v1/po/${detailId}`,
                     {
                         headers: {
                             Authorization: token,
                         },
                     }
                 );
-                console.log(response.data.data);
-                setDriver(response.data.data);
+                setPO(response.data.data);
             } catch (error) {
                 console.log(error);
-                setDriver([]);
+                setPO([]);
             }
         };
         if (detailId) {
-            fetchDriver();
+            fetchPO();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [detailId]);
 
-    // Update formData ketika driver berhasil di-fetch
+    // Update formData ketika po berhasil di-fetch
     useEffect(() => {
-        if (driver) {
+        if (po) {
+            po.kas_jalan = typeof po.kas_jalan === "string" ? JSON.parse(po.kas_jalan) : po.kas_jalan;
+            console.log(po.kas_jalan.KOSONGAN);
             setFormData((prevData) => ({
-                id_role: driver.id_role || prevData.id_role,
-                username: driver.username || prevData.username,
-                password: driver.password || prevData.password,
-                status_user: driver.status_user || prevData.status_user,
-                id_user: driver.id_user || prevData.id_user,
-                nik: driver.nik || prevData.nik,
-                nama_driver: driver.nama_driver || prevData.nama_driver,
-                telpon_driver: driver.telpon_driver || prevData.telpon_driver,
-                nama_kontak_darurat_driver: driver.nama_kontak_darurat_driver || prevData.nama_kontak_darurat_driver,
-                telpon_kontak_darurat_driver: driver.telpon_kontak_darurat_driver || prevData.telpon_kontak_darurat_driver,
-                alamat_driver: driver.alamat_driver || prevData.alamat_driver,
-                status_driver: driver.status_driver || prevData.status_driver,
-                id_vendor: driver.id_vendor || prevData.id_vendor,
-                id_jenis_mobil: driver.id_jenis_mobil || prevData.id_jenis_mobil
+                nomor_po: po.nomor_po || prevData.nomor_po,
+                tanggal_po: po.tanggal_po || prevData.tanggal_po,
+                jam_pemesanan_po: po.jam_pemesanan_po || prevData.jam_pemesanan_po,
+                jam_muat: po.jam_muat || prevData.jam_muat,
+                id_customer: po.id_customer || prevData.id_customer,
+                id_armada: po.id_armada || prevData.id_armada,
+                id_driver: po.id_driver || prevData.id_driver,
+                destination: po.destination || prevData.destination,
+                status_po: po.status_po || prevData.status_po,
             }));
+            if (po.kas_jalan.REGULER){
+                setFormDataReguler(() => ({
+                    jarak_isi: po.kas_jalan.REGULER.jarak_isi || "0",
+                    jarak_kosong: po.kas_jalan.REGULER.jarak_kosong || "0",
+                    jam_tunggu: po.kas_jalan.REGULER.jam_tunggu || "0",
+                    gaji_driver: po.kas_jalan.REGULER.gaji_driver || "0",
+                    e_toll: po.kas_jalan.REGULER.e_toll || "0",
+                    keterangan_rute: po.kas_jalan.REGULER.keterangan_rute || "",
+                    tonase: po.kas_jalan.REGULER.tonase || "0",
+                    status_kas_jalan: po.kas_jalan.REGULER.status_kas_jalan || "",
+                }));
+            } else {
+                setFormDataReguler(() => ({
+                    jarak_isi: "0",
+                    jarak_kosong: "0",
+                    jam_tunggu: "0",
+                    gaji_driver: "0",
+                    e_toll: "0",
+                    keterangan_rute: "",
+                    tonase: "0"
+                }));
+            }
+
+            if (po.kas_jalan.KOSONGAN) {
+                setFormDataKosongan(() => ({
+                    jarak_isi: po.kas_jalan.REGULER.jarak_isi || "0",
+                    jarak_kosong: po.kas_jalan.REGULER.jarak_kosong || "0",
+                    jam_tunggu: po.kas_jalan.REGULER.jam_tunggu || "0",
+                    gaji_driver: po.kas_jalan.REGULER.gaji_driver || "0",
+                    e_toll: po.kas_jalan.REGULER.e_toll || "0",
+                    keterangan_rute: po.kas_jalan.REGULER.keterangan_rute || "",
+                    tonase: po.kas_jalan.REGULER.tonase || "0",
+                    status_kas_jalan: po.kas_jalan.REGULER.status_kas_jalan || "",
+                }));
+            } else {
+                setFormDataKosongan(() => ({
+                    jarak_isi: "0",
+                    jarak_kosong: "0",
+                    jam_tunggu: "0",
+                    gaji_driver: "0",
+                    e_toll: "0",
+                    keterangan_rute: "",
+                    tonase: "0"
+                }));
+            }
         }
-    }, [driver]);
+    }, [po]);
 
     // Handle perubahan input form
     const handleChange = (e) => {
@@ -78,7 +250,6 @@ const DetailPage = ({ detailId, handleBackClick }) => {
             [name]: value
         }));
     };
-
 
     const handleUpdate = async (event) => {
         event.preventDefault();
@@ -143,135 +314,75 @@ const DetailPage = ({ detailId, handleBackClick }) => {
             </div>
             <div className="col-md-12 mt-3">
                 <div className="row">
+                    <div className="col-lg-12">
+                        <div className="mb-3">
+                            <div className="divider text-start">
+                                <div className="divider-text">
+                                    <span className="menu-header-text fs-6">Informasi Purchase Order</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="nik" className="form-label">
-                            Nama Lengkap
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="nik"
-                            name="nik"
-                            placeholder=""
-                            ref={inputRef}
-                            value={driver?.nik}
-                            onChange={handleChange}
+                        <label htmlFor="nomor_po" className="form-label">Nomor PO</label>
+                        <input className="form-control" type="text" id="nomor_po" name='nomor_po' placeholder="88LOG-PO0000-000" onChange={handleChange} required readOnly value={formData.nomor_po || ""} />
+                    </div>
+                    <div className="col-md-3 col-sm-12 mb-3">
+                        <label htmlFor="tanggal_po" className="form-label">Tanggal PO</label>
+                        <input className="form-control text-uppercase" type="date" id="tanggal_po" name='tanggal_po' placeholder="" onChange={handleChange}
+                        value={formData.tanggal_po || ""}
+                        required />
+                    </div>
+                    <div className="col-md-3 col-sm-12 mb-3">
+                        <label htmlFor="jam_pemesanan_po" className="form-label">Jam Stanby</label>
+                        <input className="form-control" type="time" id="jam_pemesanan_po" name='jam_pemesanan_po' onChange={handleChange} value={formData.jam_pemesanan_po || ""}
+                        required />
+                    </div>
+                    <div className="col-md-3 col-sm-12 mb-3">
+                        <label htmlFor="jam_muat" className="form-label">Jam Muat</label>
+                        <input className="form-control" type="time" id="jam_muat" name='jam_muat' onChange={handleChange} value={formData.jam_muat || ""} required />
+                    </div>
+                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                        <label htmlFor="id_customer" className="form-label">Customer</label>
+                        <Select
+                            id="id_customer"
+                            name="id_customer"
+                            value={selectedCustomer}
+                            onChange={handleCustomerChange}
+                            options={customerOption}
+                            placeholder="Pilih Customer"
                             required
                         />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="nama_driver" className="form-label">
-                            Nama Lengkap
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="nama_driver"
-                            name="nama_driver"
-                            placeholder="Nama Lengkap"
-                            value={driver?.nama_driver}
-                            onChange={handleChange}
+                        <label htmlFor="telpon_kontak_darurat_driver" className="form-label">Origin</label>
+                        <input className="form-control text-uppercase" type="text" readOnly value={origin} />
+                    </div>
+                    <div className="col-md-3 col-sm-12 mb-3">
+                        <label htmlFor="destination" className="form-label">Destination</label>
+                        <input className="form-control" type="text" id="destination" name='destination' placeholder="" onChange={handleChange} value={formData.destination || ""} required />
+                    </div>
+                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                        <label htmlFor="id_armada" className="form-label">Armada</label>
+                        <Select
+                            id="id_armada"
+                            name="id_armada"
+                            value={selectedArmada}
+                            onChange={handleArmadaChange}
+                            options={armadaOption}
+                            placeholder="Pilih Armada"
                             required
                         />
                     </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="telpon_driver" className="form-label">
-                            Telpon Driver
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="telpon_driver"
-                            name="telpon_driver"
-                            placeholder="Telpon Driver"
-                            value={driver?.telpon_driver}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="nama_kontak_darurat_driver"
-                            className="form-label"
-                        >
-                            Nama Kontak Darurat
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="nama_kontak_darurat_driver"
-                            name="nama_kontak_darurat_driver"
-                            placeholder="Nama Kontak Darurat"
-                            value={driver?.nama_kontak_darurat_driver}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="telpon_kontak_darurat_driver"
-                            className="form-label"
-                        >
-                            Telpon Kontak Darurat
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="telpon_kontak_darurat_driver"
-                            name="telpon_kontak_darurat_driver"
-                            placeholder="Telpon Kontak Darurat"
-                            value={driver?.telpon_kontak_darurat_driver}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="masa_berlaku_sim"
-                            className="form-label"
-                        >
-                            Masa Berlaku SIM
-                        </label>
-                        <input
-                            className="form-control text-uppercase"
-                            type="date"
-                            id="masa_berlaku_sim"
-                            name="masa_berlaku_sim"
-                            placeholder=""
-                            value={driver?.masa_berlaku_sim}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="foto_ktp_driver"
-                            className="form-label"
-                        >
-                            Foto KTP
-                        </label>
-                        <input
-                            className="form-control"
-                            type="file"
-                            id="foto_ktp_driver"
-                            name="foto_ktp_driver"
-                            placeholder=""
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="foto_sim_driver"
-                            className="form-label"
-                        >
-                            Foto SIM
-                        </label>
-                        <input
-                            className="form-control"
-                            type="file"
-                            id="foto_sim_driver"
-                            name="foto_sim_driver"
-                            placeholder=""
+                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                        <label htmlFor="id_driver" className="form-label">Driver</label>
+                        <Select
+                            id="id_driver"
+                            name="id_driver"
+                            value={selectedDriver}
+                            onChange={handleDriverChange}
+                            options={driverOption}
+                            placeholder="Pilih Driver"
                             required
                         />
                     </div>
@@ -287,6 +398,67 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                             SIMPAN PERUBAHAN
                         </button>
                     </div>
+                    <div className="col-lg-12">
+                        <div className="mb-3">
+                            <div className="divider text-start">
+                                <div className="divider-text">
+                                    <span className="menu-header-text fs-6">Informasi Kas Jalan Reguler</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {formDataReguler && (
+                        (formDataReguler.jarak_isi !== "0" && (
+                            <div className="row">
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="jarak_isi" className="form-label">Jarak Isi (KM)</label>
+                                    <input className="form-control" type="text" id="jarak_isi" name="jarak_isi" placeholder="88LOG-PO0000-000" onChange={handleChange} required readOnly value={formDataReguler.jarak_isi || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="jarak_kosong" className="form-label">Jarak Kosong (KM)</label>
+                                    <input className="form-control" type="text" id="jarak_kosong" name="jarak_kosong" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.jarak_kosong || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="jam_tunggu" className="form-label">Jam Tunggu (Jam)</label>
+                                    <input className="form-control" type="text" id="jam_tunggu" name="jam_tunggu" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.jam_tunggu || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="gaji_driver" className="form-label">Gaji Driver</label>
+                                    <input className="form-control" type="text" id="gaji_driver" name="gaji_driver" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.gaji_driver || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="e_toll" className="form-label">E-Toll</label>
+                                    <input className="form-control" type="text" id="e_toll" name="e_toll" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.e_toll || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="tonase" className="form-label">Tonase (Kg)</label>
+                                    <input className="form-control" type="text" id="tonase" name="tonase" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.tonase || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="kas_jalan" className="form-label">Kas Jalan</label>
+                                    <input className="form-control" type="text" id="kas_jalan" name="kas_jalan" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.kas_jalan || "0"} />
+                                </div>
+                            </div>
+                        )
+                    ))}
+                    <div className="col-lg-12">
+                        <div className="mb-3">
+                            <div className="divider text-start">
+                                <div className="divider-text">
+                                    <span className="menu-header-text fs-6">Informasi Kas Jalan Kosongan (To Garasi)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-12">
+                        <div className="mb-3">
+                            <div className="divider text-start">
+                                <div className="divider-text">
+                                    <span className="menu-header-text fs-6">Informasi Titik Bongkar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -294,8 +466,10 @@ const DetailPage = ({ detailId, handleBackClick }) => {
 };
 
 DetailPage.propTypes = {
-    handlePageChanges: PropTypes.func.isRequired,
     detailId: PropTypes.number.isRequired,
+    idCustomerInit: PropTypes.number.isRequired,
+    idArmadaInit: PropTypes.number.isRequired,
+    idDriverInit: PropTypes.number.isRequired,
     handleBackClick: PropTypes.func.isRequired
 };
 
