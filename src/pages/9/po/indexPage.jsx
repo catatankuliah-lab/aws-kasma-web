@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
-import AddPage from "./AddPage";
+import AddPage from "./addPage";
 import DetailPage from "./detailPage";
 import { useNavigate } from "react-router-dom";
 
@@ -18,8 +18,17 @@ const IndexPage = () => {
     const [currentView, setCurrentView] = useState("index");
     const [detailId, setDetailId] = useState(null);
     const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]); // Untuk data hasil pencarian
-    const [searchTerm, setSearchTerm] = useState(""); // State pencarian
+    const [filteredData, setFilteredData] = useState([]);
+    const [filters, setFilters] = useState({
+        nomor_po: "",
+        customer: "",
+        nopol_armada: "",
+        nama_driver: "",
+        startDate: "",
+        endDate: "",
+        status_po: ""
+    });
+    const [tempFilters, setTempFilters] = useState(filters);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -34,37 +43,49 @@ const IndexPage = () => {
         },
         {
             name: "Nomor PO",
-            selector: (row) => row.nik,
+            selector: (row) => row.nomor_po,
             sortable: true,
             width: "200px",
         },
         {
             name: "Tanggal PO",
-            selector: (row) => row.nik,
+            selector: (row) => formatDate(row.tanggal_po),
             sortable: true,
-            width: "200px",
+            width: "150px",
         },
         {
             name: "Jam Stanby dan Muat",
-            selector: (row) => `${row.nik} | ${row.nik}`,
+            selector: (row) => `${row.jam_pemesanan_po} | ${row.jam_muat}`,
             sortable: true,
             width: "200px",
         },
         {
             name: "Customer",
-            selector: (row) => row.nama_driver,
+            selector: (row) => row.nama_customer,
             sortable: true,
             width: "200px",
         },
         {
             name: "Origin to Destination",
-            selector: (row) => `${row.nama_driver} to ${row.nama_driver}`,
+            selector: (row) => `${row.alamat_customer} to ${row.destination}`,
+            sortable: true,
+            width: "200px",
+        },
+        {
+            name: "Armada",
+            selector: (row) => `${row.nopol_armada} (${row.nama_jenis_kendaraan})`,
+            sortable: true,
+            width: "200px",
+        },
+        {
+            name: "Driver",
+            selector: (row) => row.nama_driver,
             sortable: true,
             width: "200px",
         },
         {
             name: "Status PO",
-            selector: (row) => row.nama_driver,
+            selector: (row) => row.status_po,
             sortable: true,
             width: "200px",
         },
@@ -103,17 +124,28 @@ const IndexPage = () => {
         if (!token) {
             navigate("/");
         }
+
         try {
-            const response = await axios.get(`http://localhost:3090/api/v1/driver`, {
+            const response = await axios.get("http://localhost:3090/api/v1/po", {
                 headers: { Authorization: token },
-                params: { page, limit },
+                params: {
+                    page,
+                    limit,
+                    nomor_po: filters.nomor_po,
+                    customer: filters.customer,
+                    nopol_armada: filters.nopol_armada,
+                    nama_driver: filters.nama_driver,
+                    startDate: filters.startDate,
+                    endDate: filters.endDate,
+                    status_po: filters.status_po
+                },
             });
 
             const fetchedData = Array.isArray(response.data.data)
                 ? response.data.data
                 : [response.data.data];
+
             setData(fetchedData);
-            setFilteredData(fetchedData); // Set data awal ke filteredData juga
             setTotalRecords(response.data.totalData);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -128,14 +160,30 @@ const IndexPage = () => {
     }, [currentPage, limit]);
 
     useEffect(() => {
-        // Filter data berdasarkan pencarian
-        const filtered = data.filter(
-            (item) =>
-                item.nik.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.nama_driver.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        setCurrentPage(1); // Reset ke halaman 1 saat filter berubah
+        loadData(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters]); // Fetch ulang data saat filter berubah
+
+    useEffect(() => {
+        const filtered = data.filter((item) => {
+            const matchNomorPO = item.nomor_po.toLowerCase().includes(filters.nomor_po.toLowerCase());
+            const matchCustomer = item.nama_customer.toLowerCase().includes(filters.customer.toLowerCase());
+            const matchNopolArmada = item.nopol_armada.toLowerCase().includes(filters.nopol_armada.toLowerCase());
+            const matchNamaDriver = item.nama_driver.toLowerCase().includes(filters.nama_driver.toLowerCase());
+            const matchStatusPO = item.status_po.toLowerCase().includes(filters.status_po.toLowerCase());
+
+            const itemDate = new Date(item.tanggal_po);
+            const startDate = filters.startDate ? new Date(filters.startDate) : null;
+            const endDate = filters.endDate ? new Date(filters.endDate) : null;
+
+            const matchDate = (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
+
+            return matchNomorPO && matchCustomer && matchNopolArmada && matchNamaDriver && matchDate && matchStatusPO;
+        });
+
         setFilteredData(filtered);
-    }, [searchTerm, data]);
+    }, [filters, data]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -145,8 +193,8 @@ const IndexPage = () => {
 
     const handleDetailClick = (row) => {
         if (row.id_driver !== null) {
-          setDetailId(row.id_driver);
-          setCurrentView("detail");
+            setDetailId(row.id_po);
+            setCurrentView("detail");
         }
     };
 
@@ -159,6 +207,15 @@ const IndexPage = () => {
 
     const handleBackClick = () => {
         setCurrentView("index");
+        loadData();
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = (`0${date.getMonth() + 1}`).slice(-2);
+        const day = (`0${date.getDate()}`).slice(-2);
+        return `${day}/${month}/${year}`;
     };
 
     return (
@@ -187,15 +244,90 @@ const IndexPage = () => {
                                 untuk menambahkan Purchase Order.
                             </div>
                         </div>
+                        <div className="col-lg-12 mt-2">
+                            <div className="mb-3">
+                                <div className="divider text-start">
+                                    <div className="divider-text">
+                                        <span className="menu-header-text fs-6">Filter Data</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         {/* Input pencarian */}
                         <div className="col-lg-12 mb-3">
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Cari berdasarkan NIK atau Nama Driver..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                            <div className="row">
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Nomor PO</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.nomor_po}
+                                        onChange={(e) => setTempFilters({ ...tempFilters, nomor_po: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Customer</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.customer}onChange={(e) => setTempFilters({ ...tempFilters, nama_customer: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Tanggal Awal</label>
+                                    <input
+                                        type="date"
+                                        className="form-control text-uppercase"
+                                        value={tempFilters.startDate}
+                                        onChange={(e) => setTempFilters({ ...tempFilters, startDate: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Tanggal Akhir</label>
+                                    <input
+                                        type="date"
+                                        className="form-control text-uppercase"
+                                        value={tempFilters.endDate}
+                                        onChange={(e) => setTempFilters({ ...tempFilters, endDate: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Nopol Armada</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.nopol_armada}
+                                        onChange={(e) => setTempFilters({ ...tempFilters, nopol_armada: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Nama Driver</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.nama_driver}
+                                        onChange={(e) => setTempFilters({ ...tempFilters, nama_driver: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Status PO</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.status_po}
+                                        onChange={(e) => setTempFilters({ ...tempFilters, status_po: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Proses</label>
+                                    <button
+                                        className="btn btn-primary w-100"
+                                        onClick={() => setFilters(tempFilters)}
+                                    >
+                                        TAMPILKAN
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div className="col-lg-12">
                             <DataTable
