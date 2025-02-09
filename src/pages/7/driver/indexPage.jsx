@@ -44,6 +44,11 @@ const IndexPage = () => {
             sortable: true
         },
         {
+            name: "Status Driver",
+            selector: (row) => row.status_driver,
+            sortable: true
+        },
+        {
             name: "",
             selector: (row) => (
                 <button onClick={() => handleDetailClick(row)} className="btn btn-link">
@@ -106,7 +111,7 @@ const IndexPage = () => {
         const filtered = data.filter(
             (item) =>
                 item.nik.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.nama_driver.toLowerCase().includes(searchTerm.toLowerCase())
+                item.nama_driver.toLowerCase().includes(searchTerm.toLowerCase()) 
         );
         setFilteredData(filtered);
     }, [searchTerm, data]);

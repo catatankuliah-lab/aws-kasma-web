@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
+import Select from "react-select";
 
 const DetailPage = ({ detailId, handleBackClick }) => {
     const inputRef = useRef(null);
@@ -10,6 +11,11 @@ const DetailPage = ({ detailId, handleBackClick }) => {
     const token = localStorage.getItem('token');
 
     const [driver, setDriver] = useState(null);
+    const [statusDriverOption, setStatusDriverOption] = useState([
+        { value: "TERSEDIA", label: "TERSEDIA" },
+        { value: "TIDAK TERSEDIA", label: "TIDAK TERSEDIA" },
+    ]);
+    const [selectedStatusDriver, setSelectedStatusDriver] = useState(null);
 
     const [formData, setFormData] = useState({
         id_role: "",
@@ -33,7 +39,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
     useEffect(() => {
         const fetchDriver = async () => {
             try {
-                const response = await axios.get( `http://localhost:3090/api/v1/driver/${detailId}`,
+                const response = await axios.get(`http://localhost:3090/api/v1/driver/${detailId}`,
                     {
                         headers: {
                             Authorization: token,
@@ -72,9 +78,23 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                 masa_berlaku_sim: driver.masa_berlaku_sim || prevData.masa_berlaku_sim
 
             }));
+            const initialStatusDriver = statusDriverOption.find(
+                (option) => option.value === driver.status_driver
+            );
+            if (initialStatusDriver) {
+                setSelectedStatusDriver(initialStatusDriver);
+            }
         }
-    }, [driver]);
+    }, [driver, statusDriverOption]);
 
+
+    const handleStatusDriverChange = (selectedOption) => {
+        setSelectedStatusDriver(selectedOption);
+        setFormData({
+            ...formData,
+            status_driver: selectedOption ? selectedOption.value : "",
+        });
+    };
     // Handle perubahan input form
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -108,7 +128,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         dataDriverToSubmit.append('masa_berlaku_sim', formData.masa_berlaku_sim);
         dataDriverToSubmit.append('foto_ktp_driver', 'foto_ktp_driver.png');
         dataDriverToSubmit.append('foto_sim_driver', 'foto_sim_driver.png');
-        dataDriverToSubmit.append('status_driver', "TERSEDIA");
+        dataDriverToSubmit.append('status_driver', formData.status_driver);
         try {
             await axios.put(`http://localhost:3090/api/v1/driver/${detailId}`, dataDriverToSubmit, {
                 headers: {
@@ -290,6 +310,20 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                             id="foto_sim_driver"
                             name="foto_sim_driver"
                             placeholder=""
+                            required
+                        />
+                    </div>
+                    <div className="col-md-3 col-sm-12 mb-3">
+                        <label htmlFor="status_driver" className="form-label">
+                            Status Driver
+                        </label>
+                        <Select
+                            id="status_driver"
+                            name="status_driver"
+                            value={selectedStatusDriver}
+                            onChange={handleStatusDriverChange}
+                            options={statusDriverOption}
+                            placeholder="Pilih Status Driver"
                             required
                         />
                     </div>

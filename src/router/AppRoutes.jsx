@@ -4,12 +4,14 @@ import { MaintenancePage } from "../pages/MaintenancePage";
 import LoginPage from "../pages/auth/LoginPage";
 
 import Role7Driver from "../pages/7/driver/indexPage";
+import Role7Dashboard from "../pages/7/dashboard/indexPage";
 
 import Role9PO from "../pages/9/po/indexPage";
 import Role9Customer from "../pages/9/customer/indexPage";
 import Role9Driver from "../pages/9/driver/indexPage";
 
 import Role12Armada from "../pages/12/armada/indexPage";
+import Role12Dashboard from "../pages/12/dashboard/indexPage";
 
 const AppRoutes = () => {
     const id_role = localStorage.getItem('id_role');
@@ -19,7 +21,7 @@ const AppRoutes = () => {
             <Route path="/login" element={<LoginPage />} />
             {id_role == "7" && (
                 <>
-                    <Route path="/7/dashboard" element={<DashboardPage />} />
+                    <Route path="/7/dashboard" element={<Role7Dashboard />} />
                     <Route path="/7/driver" element={<Role7Driver />} />
                 </>
             )}
@@ -34,7 +36,7 @@ const AppRoutes = () => {
             )}
             {id_role == "12" && (
                 <>
-                    <Route path="/12/dashboard" element={<DashboardPage />} />
+                    <Route path="/12/dashboard" element={<Role12Dashboard />} />
                     <Route path="/12/armada" element={<Role12Armada />} />
                 </>
             )}
