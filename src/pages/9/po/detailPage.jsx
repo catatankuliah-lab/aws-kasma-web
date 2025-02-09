@@ -15,23 +15,17 @@ const DetailPage = ({ detailId, handleBackClick }) => {
     const [driver, setDriver] = useState(null);
 
     const [formData, setFormData] = useState({
-        id_role: "",
-        username: "",
-        password: "",
-        status_user: "",
-        id_user: "",
-        nik: "",
-        nama_driver: "",
-        telpon_driver: "",
-        nama_kontak_darurat_driver: "",
-        telpon_kontak_darurat_driver: "",
-        alamat_driver: "",
-        status_driver: "",
-        id_vendor: "",
-        id_jenis_mobil: ""
+        nomor_po: "",
+        tanggal_po: "",
+        jam_pemesanan_po: "",
+        jam_muat: "",
+        id_customer: "",
+        id_armada: "",
+        id_driver: "",
+        destination: "",
+        status_po: ""
     });
 
-    // Fetch data driver saat component dimount atau detailId berubah
     useEffect(() => {
         const fetchDriver = async () => {
             try {

@@ -17,8 +17,11 @@ const IndexPage = () => {
     const [currentView, setCurrentView] = useState("index");
     const [detailId, setDetailId] = useState(null);
     const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]); // Untuk data hasil pencarian
-    const [searchTerm, setSearchTerm] = useState(""); // State pencarian
+    const [filteredData, setFilteredData] = useState([]);
+    const [filters, setFilters] = useState({
+        nik: "",
+        nama_driver: ""
+    });
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -98,17 +101,18 @@ const IndexPage = () => {
 
     useEffect(() => {
         loadData(currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, limit]);
 
     useEffect(() => {
-        // Filter data berdasarkan pencarian
-        const filtered = data.filter(
-            (item) =>
-                item.nik.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.nama_driver.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        const filtered = data.filter((item) => {
+            const matchNIK = item.nik.toLowerCase().includes(filters.nik.toLowerCase());
+            const matchNamaDriver = item.nama_driver.toLowerCase().includes(filters.nama_driver.toLowerCase());
+            return matchNIK && matchNamaDriver;
+        });
+
         setFilteredData(filtered);
-    }, [searchTerm, data]);
+    }, [filters, data]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -147,15 +151,37 @@ const IndexPage = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className="col-lg-12">
+                            <div className="mb-3">
+                                <div className="divider text-start">
+                                    <div className="divider-text">
+                                        <span className="menu-header-text fs-6">Filter Data</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         {/* Input pencarian */}
                         <div className="col-lg-12 mb-3">
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Cari berdasarkan NIK atau Nama Driver..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                            <div className="row">
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">NIK</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={filters.nik}
+                                        onChange={(e) => setFilters({ ...filters, nik: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Nama Driver</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={filters.nama_driver}
+                                        onChange={(e) => setFilters({ ...filters, nama_driver: e.target.value })}
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <div className="col-lg-12">
                             <DataTable
