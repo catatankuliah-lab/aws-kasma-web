@@ -26,7 +26,9 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
         gaji_driver: "",
         e_toll: "",
         keterangan_rute: "",
-        tonase: ""
+        tonase: "",
+        rasio_perkalian: "",
+        rasio_perkalian_kosong: ""
     });
 
     const [formDataKosongan, setFormDataKosongan] = useState({
@@ -37,7 +39,8 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
         e_toll: "",
         keterangan_rute: "",
         tonase: "",
-        status_kas_jalan: ""
+        rasio_perkalian: "",
+        rasio_perkalian_kosong: ""
     });
 
     const [po, setPO] = useState(null);
@@ -450,6 +453,40 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                             </div>
                         </div>
                     </div>
+                    {formDataKosongan && (
+                        (formDataKosongan.jarak_isi !== "0" && (
+                            <div className="row">
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="jarak_isi" className="form-label">Jarak Isi (KM)</label>
+                                    <input className="form-control" type="text" id="jarak_isi" name="jarak_isi" placeholder="88LOG-PO0000-000" onChange={handleChange} required readOnly value={formDataKosongan.jarak_isi || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="jarak_kosong" className="form-label">Jarak Kosong (KM)</label>
+                                    <input className="form-control" type="text" id="jarak_kosong" name="jarak_kosong" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.jarak_kosong || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="jam_tunggu" className="form-label">Jam Tunggu (Jam)</label>
+                                    <input className="form-control" type="text" id="jam_tunggu" name="jam_tunggu" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.jam_tunggu || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="gaji_driver" className="form-label">Gaji Driver</label>
+                                    <input className="form-control" type="text" id="gaji_driver" name="gaji_driver" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.gaji_driver || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="e_toll" className="form-label">E-Toll</label>
+                                    <input className="form-control" type="text" id="e_toll" name="e_toll" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.e_toll || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="tonase" className="form-label">Tonase (Kg)</label>
+                                    <input className="form-control" type="text" id="tonase" name="tonase" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.tonase || "0"} />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="kas_jalan" className="form-label">Kas Jalan</label>
+                                    <input className="form-control" type="text" id="kas_jalan" name="kas_jalan" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.kas_jalan || "0"} />
+                                </div>
+                            </div>
+                        )
+                        ))}
                     <div className="col-lg-12">
                         <div className="mb-3">
                             <div className="divider text-start">
