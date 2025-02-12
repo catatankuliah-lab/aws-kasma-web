@@ -92,5 +92,25 @@
             "link": "/12/checkup",
             "roles": ["12"]
         }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/10/dashboard",
+            "roles": ["10"]
+        }]
+    },
+    {
+        "header": "Kas Jalan",
+        "items": [{
+            "text": "Kas Jalan",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/10/kas_jalan",
+            "roles": ["10"]
+        }]
     }
 ]

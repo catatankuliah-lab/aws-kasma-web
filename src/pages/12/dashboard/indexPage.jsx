@@ -42,7 +42,7 @@ const IndexPage = () => {
         labels: ["Tersedia", "Tidak Tersedia"],
         datasets: [
             {
-                label: "Armada Availability",
+                label: "Jumlah Armada",
                 data: [tersedia, tidaktersedia],
                 backgroundColor: ["#2196F3", "#FF7043"],
                 borderColor: ["#ffffff"],
@@ -72,13 +72,13 @@ const IndexPage = () => {
                             <div className="col-sm-7">
                                 <div className="card-body">
                                     <h5 className="card-title text-primary">
-                                        Hehehehe, Semangatttttt! 🦾
+                                        DASHBOARD ARMADA
                                     </h5>
-                                    <blockquote className="blockquote mt-4">
-                                        <p className="fw-bold" >Otot Kawat, Tulang Punggung</p>
+                                    <blockquote className="blockquote mt-3">
+                                        <p className="fw-bold">Monitoring dan manajemen armada secara efisien dengan data yang akurat dan terstruktur.</p>
                                     </blockquote>
                                     <figcaption className="blockquote-footer">
-                                        pineaple, {(new Date().toLocaleDateString('id-ID', { month: 'long' }))} {(new Date().getFullYear())}
+                                        PT. Delapan Delapan Logistics, {(new Date().toLocaleDateString('id-ID', { month: 'long' }))} {(new Date().getFullYear())}
                                     </figcaption>
                                 </div>
                             </div>
@@ -99,9 +99,9 @@ const IndexPage = () => {
             </div>
             <div className="row">
                 <div className="col-lg-12 col-md-12 col-6 mb-6">
-                    <div className="card h-100">
+                    <div className="card h-100 pb-3">
                         <div className="card-body" style={{ height: "300px", position: "relative", padding: "0", overflow: "hidden" }}>
-                            <h2 style={{ position: "absolute", top: "10px", left: "20px", zIndex: 10 }}>AKTIF & TIDAK AKTIF ARMADA</h2>
+                            <h5 className="card-title text-primary" style={{ position: "absolute", top: "10px", left: "20px", zIndex: 10 }}>AKTIF & TIDAK AKTIF ARMADA</h5>
                             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", height: "calc(100% - 30px)", margin: "0 auto", position: "absolute", top: "30px" }}>
                                 <Pie data={data} options={options} />
                             </div>
