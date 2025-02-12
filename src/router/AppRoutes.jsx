@@ -10,6 +10,8 @@ import Role9PO from "../pages/9/po/indexPage";
 import Role9Customer from "../pages/9/customer/indexPage";
 import Role9Driver from "../pages/9/driver/indexPage";
 
+import Role10PO from "../pages/10/po/indexPage";
+
 import Role12Armada from "../pages/12/armada/indexPage";
 import Role12Dashboard from "../pages/12/dashboard/indexPage";
 
@@ -32,6 +34,12 @@ const AppRoutes = () => {
                     <Route path="/9/customer" element={<Role9Customer />} />
                     <Route path="/9/armada" element={<Role9PO />} />
                     <Route path="/9/driver" element={<Role9Driver />} />
+                </>
+            )}
+            {id_role == "10" && (
+                <>
+                    <Route path="/10/dashboard" element={<DashboardPage />} />
+                    <Route path="/10/po" element={<Role10PO />} />
                 </>
             )}
             {id_role == "12" && (

@@ -72,6 +72,26 @@
             "text": "Dashboard",
             "icon": "bx bx-home",
             "available": true,
+            "link": "/10/dashboard",
+            "roles": ["10"]
+        }]
+    },
+    {
+        "header": "PO dan Kas Jalan",
+        "items": [{
+            "text": "PO dan Kas Jalan",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/10/po",
+            "roles": ["10"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
             "link": "/12/dashboard",
             "roles": ["12"]
         }]
