@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
+import Swal from "sweetalert2";
 
-const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handleBackClick }) => {
+
+const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, handleBackClick }) => {
     const token = localStorage.getItem('token');
 
     const [formData, setFormData] = useState({
@@ -81,10 +83,15 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
         }
     }, [customerOption, idCustomerInit]);
 
-    const handleCustomerChange = async (selectedOption) => {
+    const handleCustomerChange = (selectedOption) => {
         setSelectedCustomer(selectedOption);
         setOrigin(selectedOption.alamat);
+        setFormData((prevData) => ({
+            ...prevData,
+            id_customer: selectedOption.value // Pastikan id_customer diperbarui
+        }));
     };
+    
 
     const [armadaOption, setArmadaOption] = useState([]);
     const [selectedArmada, setSelectedArmada] = useState(null);
@@ -118,9 +125,14 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
             setSelectedArmada(initialValue);
         }
     }, [armadaOption, idArmadaInit]);
-    const handleArmadaChange = async (selectedOption) => {
+    const handleArmadaChange = (selectedOption) => {
         setSelectedArmada(selectedOption);
+        setFormData(prevData => ({
+            ...prevData,
+            id_armada: selectedOption.value // Menyimpan ID Armada ke dalam formData
+        }));
     };
+    
 
     const [driverOption, setDriverOption] = useState([]);
     const [selectedDriver, setSelectedDriver] = useState(null);
@@ -154,14 +166,19 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
             setSelectedDriver(initialValue);
         }
     }, [driverOption, idDriverInit]);
-    const handleDriverChange = async (selectedOption) => {
+    const handleDriverChange = (selectedOption) => {
         setSelectedDriver(selectedOption);
+        setFormData(prevData => ({
+            ...prevData,
+            id_driver: selectedOption.value // Menyimpan ID Driver ke dalam formData
+        }));
     };
+    
 
     useEffect(() => {
         const fetchPO = async () => {
             try {
-                const response = await axios.get( `http://localhost:3090/api/v1/po/${detailId}`,
+                const response = await axios.get(`http://localhost:3090/api/v1/po/${detailId}`,
                     {
                         headers: {
                             Authorization: token,
@@ -177,7 +194,7 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
         if (detailId) {
             fetchPO();
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [detailId]);
 
     // Update formData ketika po berhasil di-fetch
@@ -196,7 +213,7 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                 destination: po.destination || prevData.destination,
                 status_po: po.status_po || prevData.status_po,
             }));
-            if (po.kas_jalan.REGULER){
+            if (po.kas_jalan.REGULER) {
                 setFormDataReguler(() => ({
                     jarak_isi: po.kas_jalan.REGULER.jarak_isi || "0",
                     jarak_kosong: po.kas_jalan.REGULER.jarak_kosong || "0",
@@ -262,40 +279,43 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
 
     const handleUpdate = async (event) => {
         event.preventDefault();
-        console.log(formData);
-        // try {
-        //     let link = "januari";
-        //     if (selectedAlokasi.value == 1) {
-        //         link = "januari";
-        //     } else if (selectedAlokasi.value == 2) {
-        //         link = "februari";
-        //     } else {
-        //         link = "januari";
-        //     }
-        //     await axios.post(`http://localhost:3090/api/${link}-do`, formDataInsert, {
-        //         headers: {
-        //             'Authorization': token,
-        //             'Content-Type': 'multipart/form-data',
-        //         }
-        //     });
-        //     Swal.fire({
-        //         title: 'Data Doc Out',
-        //         text: 'Data Berhasil Ditambahkan',
-        //         icon: 'success',
-        //         showConfirmButton: false,
-        //         timer: 2000,
-        //     }).then(() => {
-        //         handleBackClick();
-        //     });
-        // } catch (error) {
-        //     console.error('Error submitting data:', error);
-        //     Swal.fire({
-        //         title: 'Error',
-        //         text: 'Gagal menambahkan data. Silakan coba lagi.',
-        //         icon: 'error',
-        //         showConfirmButton: true,
-        //     });
-        // }
+        const dataPOtoSubmit = new FormData();
+        dataPOtoSubmit.append("nomor_po", formData.nomor_po);
+        dataPOtoSubmit.append("tanggal_po", formData.tanggal_po);
+        dataPOtoSubmit.append("jam_pemesanan_po", formData.jam_pemesanan_po);
+        dataPOtoSubmit.append("jam_muat", formData.jam_muat);
+        dataPOtoSubmit.append("id_customer", formData.id_customer);
+        dataPOtoSubmit.append("id_armada", formData.id_armada);
+        dataPOtoSubmit.append("id_driver", formData.id_driver);
+        dataPOtoSubmit.append("destination", formData.destination);
+        dataPOtoSubmit.append('status_po', formData.status_po);
+
+        try {
+            await axios.put(`http://localhost:3090/api/v1/po/${detailId}`, dataPOtoSubmit, {
+                headers: {
+                    Authorization: token,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            Swal.fire({
+                title: "Data PO",
+                text: "Data Berhasil Diperbaharui",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000,
+            }).then(() => {
+                handleBackClick();
+            });
+        } catch (error) {
+            console.error("Error submitting data:", error);
+            Swal.fire({
+                title: "Error",
+                text: "Gagal menambahkan data. Silakan coba lagi.",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        }
     };
 
     function formatRupiah(angka) {
@@ -347,13 +367,13 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="tanggal_po" className="form-label">Tanggal PO</label>
                         <input className="form-control text-uppercase" type="date" id="tanggal_po" name='tanggal_po' placeholder="" onChange={handleChange}
-                        value={formData.tanggal_po || ""}
-                        required />
+                            value={formData.tanggal_po || ""}
+                            required />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="jam_pemesanan_po" className="form-label">Jam Stanby</label>
                         <input className="form-control" type="time" id="jam_pemesanan_po" name='jam_pemesanan_po' onChange={handleChange} value={formData.jam_pemesanan_po || ""}
-                        required />
+                            required />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="jam_muat" className="form-label">Jam Muat</label>
@@ -402,6 +422,9 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                             placeholder="Pilih Driver"
                             required
                         />
+                    </div>
+                    <div className="col-md-3 col-sm-12 mb-3">
+                        <input className="form-control" type="text" id="status_po" name='status_po' placeholder="" onChange={handleChange} value={formData.status_po || ""} required hidden/>
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="" className="form-label">
@@ -469,7 +492,7 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                                 </div>
                             </div>
                         )
-                    ))}
+                        ))}
                     <div className="col-lg-12">
                         <div className="mb-3">
                             <div className="divider text-start">
