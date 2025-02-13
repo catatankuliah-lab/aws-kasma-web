@@ -260,44 +260,6 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
         }));
     };
 
-    const handleUpdate = async (event) => {
-        event.preventDefault();
-        console.log(formData);
-        // try {
-        //     let link = "januari";
-        //     if (selectedAlokasi.value == 1) {
-        //         link = "januari";
-        //     } else if (selectedAlokasi.value == 2) {
-        //         link = "februari";
-        //     } else {
-        //         link = "januari";
-        //     }
-        //     await axios.post(`http://localhost:3090/api/${link}-do`, formDataInsert, {
-        //         headers: {
-        //             'Authorization': token,
-        //             'Content-Type': 'multipart/form-data',
-        //         }
-        //     });
-        //     Swal.fire({
-        //         title: 'Data Doc Out',
-        //         text: 'Data Berhasil Ditambahkan',
-        //         icon: 'success',
-        //         showConfirmButton: false,
-        //         timer: 2000,
-        //     }).then(() => {
-        //         handleBackClick();
-        //     });
-        // } catch (error) {
-        //     console.error('Error submitting data:', error);
-        //     Swal.fire({
-        //         title: 'Error',
-        //         text: 'Gagal menambahkan data. Silakan coba lagi.',
-        //         icon: 'error',
-        //         showConfirmButton: true,
-        //     });
-        // }
-    };
-
     function formatRupiah(angka) {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
@@ -312,7 +274,7 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                 <div className="mb-3">
                     <div className="divider text-start fw-bold">
                         <div className="divider-text">
-                            <span className="menu-header-text fs-6">Detail Driver</span>
+                            <span className="menu-header-text fs-6">Detail Purchase Order</span>
                         </div>
                     </div>
                 </div>
@@ -326,7 +288,7 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                     >
                         disini
                     </button>{" "}
-                    untuk kembali ke menu utama Driver.
+                    untuk kembali ke menu utama Purchase Order.
                 </div>
             </div>
             <div className="col-md-12 mt-3">
@@ -348,16 +310,16 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                         <label htmlFor="tanggal_po" className="form-label">Tanggal PO</label>
                         <input className="form-control text-uppercase" type="date" id="tanggal_po" name='tanggal_po' placeholder="" onChange={handleChange}
                         value={formData.tanggal_po || ""}
-                        required />
+                        required readOnly />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="jam_pemesanan_po" className="form-label">Jam Stanby</label>
                         <input className="form-control" type="time" id="jam_pemesanan_po" name='jam_pemesanan_po' onChange={handleChange} value={formData.jam_pemesanan_po || ""}
-                        required />
+                        required readOnly />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="jam_muat" className="form-label">Jam Muat</label>
-                        <input className="form-control" type="time" id="jam_muat" name='jam_muat' onChange={handleChange} value={formData.jam_muat || ""} required />
+                        <input className="form-control" type="time" id="jam_muat" name='jam_muat' onChange={handleChange} value={formData.jam_muat || ""} required readOnly />
                     </div>
                     <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
                         <label htmlFor="id_customer" className="form-label">Customer</label>
@@ -368,7 +330,7 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                             onChange={handleCustomerChange}
                             options={customerOption}
                             placeholder="Pilih Customer"
-                            required
+                            required readOnly
                         />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
@@ -377,7 +339,7 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="destination" className="form-label">Destination</label>
-                        <input className="form-control" type="text" id="destination" name='destination' placeholder="" onChange={handleChange} value={formData.destination || ""} required />
+                        <input className="form-control" type="text" id="destination" name='destination' placeholder="" onChange={handleChange} value={formData.destination || ""} required readOnly />
                     </div>
                     <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
                         <label htmlFor="id_armada" className="form-label">Armada</label>
@@ -388,7 +350,7 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                             onChange={handleArmadaChange}
                             options={armadaOption}
                             placeholder="Pilih Armada"
-                            required
+                            required readOnly
                         />
                     </div>
                     <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
@@ -400,20 +362,8 @@ const DetailPage = ({detailId, idCustomerInit, idArmadaInit, idDriverInit,handle
                             onChange={handleDriverChange}
                             options={driverOption}
                             placeholder="Pilih Driver"
-                            required
+                            required readOnly
                         />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="" className="form-label">
-                            Proses
-                        </label>
-                        <button
-                            type="button"
-                            onClick={handleUpdate}
-                            className="btn btn-primary w-100"
-                        >
-                            SIMPAN PERUBAHAN
-                        </button>
                     </div>
                     <div className="col-lg-12">
                         <div className="mb-3">
