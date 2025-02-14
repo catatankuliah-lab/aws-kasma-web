@@ -547,7 +547,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="tonase" className="form-label">Tonase (Kg)</label>
-                                <input className="form-control" type="number" id="tonase" name="tonase" placeholder="0" onChange={handleChangeReguler} required value={parseInt(formDataReguler.tonase).toLocaleString('id-ID')} />
+                                <input className="form-control" type="text" id="tonase" name="tonase" placeholder="0" onChange={handleChangeReguler} required value={parseInt(formDataReguler.tonase).toLocaleString('id-ID')} />
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="kas_jalan" className="form-label">Kas Jalan</label>
@@ -598,7 +598,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                                         }));
                                     }}
                                     required
-                                    value={formDataKosongan.jarak_isi ? formDataKosongan.jarak_isi.toLocaleString('id-ID') : ""}
+                                    value={formDataKosongan.jarak_isi ? formDataKosongan.jarak_isi.toLocaleString('id-ID') : "0"}
                                 />
                             </div>
 
@@ -640,15 +640,30 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="gaji_driver" className="form-label">Gaji Driver</label>
-                                <input className="form-control" type="number" id="gaji_driver" name="gaji_driver" placeholder="0" onChange={handleChangeKosongan} required value={formDataKosongan.gaji_driver} />
+                                <input className="form-control" type="text" id="gaji_driver" name="gaji_driver" placeholder="0" onChange={handleChangeKosongan} required value={formDataKosongan.gaji_driver} />
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="e_toll" className="form-label">E-Toll</label>
-                                <input className="form-control" type="number" id="e_toll" name="e_toll" placeholder="0" onChange={handleChangeKosongan} required value={formDataKosongan.e_toll} />
+                                <input className="form-control" type="text" id="e_toll" name="e_toll" placeholder="0" onChange={handleChangeKosongan} required value={formDataKosongan.e_toll} />
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
-                                <label htmlFor="tonase" className="form-label">Tonase (Kg)</label>
-                                <input className="form-control" type="number" id="tonase" name="tonase" placeholder="0" onChange={handleChangeKosongan} required value={parseInt(formDataKosongan.tonase).toLocaleString('id-ID')} />
+                                <label htmlFor="jarak_kosong" className="form-label">Tonase (KG)</label>
+                                <input
+                                    className="form-control"
+                                    type="text"  // Ubah ke text agar bisa menampilkan format ribuan
+                                    id="tonase"
+                                    name="tonase"
+                                    placeholder="0"
+                                    onChange={(e) => {
+                                        const rawValue = e.target.value.replace(/\D/g, ""); // Hanya angka
+                                        setFormDataKosongan((prevData) => ({
+                                            ...prevData,
+                                            tonase: rawValue ? parseInt(rawValue, 10) : "" // Pastikan tetap angka
+                                        }));
+                                    }}
+                                    value={formDataKosongan.tonase ? formDataKosongan.tonase.toLocaleString('id-ID') : "0"}
+                                    required
+                                />
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="kas_jalan" className="form-label">Kas Jalan</label>

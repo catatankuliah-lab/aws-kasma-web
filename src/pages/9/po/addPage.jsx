@@ -167,11 +167,10 @@ const AddPage = ({ handleBackClick }) => {
         const dataToSubmit = {
             ...formData,
             id_armada: selectedArmada.value,
-            id_customer: selectedArmada.value,
-            id_driver: selectedArmada.value,
+            id_customer: selectedCustomer.value,
+            id_driver: selectedDriver.value,
             nomor_po: nomorPO
         };
-        console.log(dataToSubmit);
         try {
             const hasil = await axios.post(`http://localhost:3090/api/v1/po`, dataToSubmit, {
                 headers: {
