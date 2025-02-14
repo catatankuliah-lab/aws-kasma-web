@@ -9,6 +9,7 @@ import Role7Dashboard from "../pages/7/dashboard/indexPage";
 import Role9PO from "../pages/9/po/indexPage";
 import Role9Customer from "../pages/9/customer/indexPage";
 import Role9Driver from "../pages/9/driver/indexPage";
+import Role9Armada from "../pages/9/armada/indexPage";
 
 import Role10PO from "../pages/10/po/indexPage";
 
@@ -32,7 +33,7 @@ const AppRoutes = () => {
                     <Route path="/9/dashboard" element={<DashboardPage />} />
                     <Route path="/9/po" element={<Role9PO />} />
                     <Route path="/9/customer" element={<Role9Customer />} />
-                    <Route path="/9/armada" element={<Role9PO />} />
+                    <Route path="/9/armada" element={<Role9Armada />} />
                     <Route path="/9/driver" element={<Role9Driver />} />
                 </>
             )}

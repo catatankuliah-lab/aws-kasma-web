@@ -11,7 +11,9 @@ const DetailPage = ({ detailId, handleBackClick }) => {
     const [jeniskendaraanOption, setJenisKendaraanOption] = useState([]);
     const [statusArmadaOption, setStatusArmadaOption] = useState([
         { value: "TERSEDIA", label: "TERSEDIA" },
-        { value: "DALAM PENGIRIMAN", label: "DALAM PENGIRIMAN" },
+        { value: "MUAT", label: "MUAT" },
+        { value: "BONGKAR", label: "BONGKAR" },
+        { value: "SELESAI", label: "SELESAI" },
     ]);
     const [selectedJenisKendaraan, setSelectedJenisKendaraan] = useState(null);
     const [selectedStatusArmada, setSelectedStatusArmada] = useState(null);

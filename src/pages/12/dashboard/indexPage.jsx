@@ -10,7 +10,9 @@ const IndexPage = () => {
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
     const [tersedia, setTersedia] = useState(0);
-    const [tidaktersedia, setTidakTersedia] = useState(0);
+    const [muat, setMuat] = useState(0);
+    const [bongkar, setBongkar] = useState(0);
+    const [selesai, setSelesai] = useState(0);
 
     useEffect(() => {
         if (!token) navigate("/");
@@ -22,14 +24,15 @@ const IndexPage = () => {
                 console.error("No token provided");
                 return;
             }
-
             try {
                 const response = await axios.get("http://localhost:3090/api/v1/armada/availability", {
                     headers: { Authorization: token },
                 });
-                console.log(response.data.data.available[0].available);
-                setTersedia(response.data.data.available[0].available);
-                setTidakTersedia(response.data.data.unavailable[0].unavailable);
+                console.log(response.data.data.tersedia[0].tersedia);
+                setTersedia(response.data.data.tersedia[0].tersedia);
+                setMuat(response.data.data.muat[0].muat);
+                setBongkar(response.data.data.bongkar[0].bongkar);
+                setSelesai(response.data.data.selesai[0].selesai);
             } catch (error) {
                 console.error("Error fetching driver availability:", error.response?.status, error.response?.data);
             }
@@ -39,12 +42,12 @@ const IndexPage = () => {
     }, [token]);
 
     const data = {
-        labels: ["Tersedia", "Tidak Tersedia"],
+        labels: ["Tersedia", "Bongkar", "Muat", "Selesai"],
         datasets: [
             {
                 label: "Jumlah Armada",
-                data: [tersedia, tidaktersedia],
-                backgroundColor: ["#2196F3", "#FF7043"],
+                data: [tersedia, muat, bongkar, selesai],
+                backgroundColor: ["#2196F3", "#FF7043", "#39FF14", "#FCE205" ],
                 borderColor: ["#ffffff"],
                 borderWidth: 2,
             },

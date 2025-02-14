@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
-import AddPage from "./AddPage";
+import AddPage from "./addPage";
 import DetailPage from "./detailPage";
 import { useNavigate } from "react-router-dom";
 
@@ -14,6 +14,10 @@ const IndexPage = () => {
             navigate("/");
         }
     }, [navigate, token]);
+    
+    const jeniskendaraanInit = (id) => {
+        console.log("Jenis kendaraan dipilih:", id);
+    };    
 
     const [currentView, setCurrentView] = useState("index");
     const [detailId, setDetailId] = useState(null);
@@ -33,14 +37,20 @@ const IndexPage = () => {
             width: "50px",
         },
         {
-            name: "NIK",
-            selector: (row) => row.nik,
+            name: "Jenis kendaraan",
+            selector: (row) => row.nama_jenis_kendaraan,
             sortable: true,
             width: "200px",
         },
         {
-            name: "Nama Driver",
-            selector: (row) => row.nama_driver,
+            name: "NOPOL",
+            selector: (row) => row.nopol_armada,
+            sortable: true,
+            width: "200px",
+        },
+        {
+            name: "Status",
+            selector: (row) => row.status_armada,
             sortable: true
         },
         {
@@ -79,7 +89,7 @@ const IndexPage = () => {
             navigate("/");
         }
         try {
-            const response = await axios.get(`http://localhost:3090/api/v1/driver`, {
+            const response = await axios.get(`http://localhost:3090/api/v1/armada`, {
                 headers: { Authorization: token },
                 params: { page, limit },
             });
@@ -99,14 +109,16 @@ const IndexPage = () => {
 
     useEffect(() => {
         loadData(currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, limit]);
 
     useEffect(() => {
         // Filter data berdasarkan pencarian
         const filtered = data.filter(
             (item) =>
-                item.nik.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.nama_driver.toLowerCase().includes(searchTerm.toLowerCase())
+                item.nama_jenis_kendaraan.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.nopol_armada.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.status_armada.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredData(filtered);
     }, [searchTerm, data]);
@@ -118,11 +130,13 @@ const IndexPage = () => {
     const handleAddClick = () => setCurrentView("add");
 
     const handleDetailClick = (row) => {
-        if (row.id_driver !== null) {
-          setDetailId(row.id_driver);
-          setCurrentView("detail");
+        if (row.id_armada !== null) {
+            setDetailId(row.id_armada);
+            setCurrentView("detail");
+            jeniskendaraanInit(row.id_jenis_kendaraan); // Inisialisasi jenis kendaraan
         }
     };
+    
 
     const handlePageChanges = (page, id = null) => {
         if (id !== null) {
@@ -133,6 +147,7 @@ const IndexPage = () => {
 
     const handleBackClick = () => {
         setCurrentView("index");
+        loadData();
     };
 
     return (
@@ -144,21 +159,9 @@ const IndexPage = () => {
                             <div className="mb-3">
                                 <div className="divider text-start fw-bold">
                                     <div className="divider-text">
-                                        <span className="menu-header-text fs-6">Data Driver</span>
+                                        <span className="menu-header-text fs-6">Data Armada</span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-12 mb-3">
-                            <div className="">
-                                Klik{" "}
-                                <button
-                                    className="fw-bold btn btn-link p-0"
-                                    onClick={() => handleAddClick()}
-                                >
-                                    disini
-                                </button>{" "}
-                                untuk menambahkan Driver.
                             </div>
                         </div>
                         {/* Input pencarian */}
@@ -166,7 +169,7 @@ const IndexPage = () => {
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Cari berdasarkan NIK atau Nama Driver..."
+                                placeholder="Cari berdasarkan Nopol, Jenis kendaraan atau Status Armada.."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -201,6 +204,7 @@ const IndexPage = () => {
                 <DetailPage
                     handlePageChanges={handlePageChanges}
                     detailId={detailId}
+                    jeniskendaraanInit={jeniskendaraanInit}
                     handleBackClick={handleBackClick}
                 />
             )}

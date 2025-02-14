@@ -17,11 +17,8 @@ const IndexPage = () => {
     const [currentView, setCurrentView] = useState("index");
     const [detailId, setDetailId] = useState(null);
     const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
-    const [filters, setFilters] = useState({
-        nik: "",
-        nama_driver: ""
-    });
+    const [filteredData, setFilteredData] = useState([]); // Untuk data hasil pencarian
+    const [searchTerm, setSearchTerm] = useState(""); // State pencarian
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -46,10 +43,15 @@ const IndexPage = () => {
             sortable: true
         },
         {
+            name: "Status Driver",
+            selector: (row) => row.status_driver,
+            sortable: true
+        },
+        {
             name: "",
             selector: (row) => (
                 <button onClick={() => handleDetailClick(row)} className="btn btn-link">
-                    <i className="bx bx-zoom-in text-priamry"></i>
+                    <i className="bx bx-zoom-in text-priamry d-none"></i>
                 </button>
             ),
             sortable: false,
@@ -101,22 +103,23 @@ const IndexPage = () => {
 
     useEffect(() => {
         loadData(currentPage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, limit]);
 
     useEffect(() => {
-        const filtered = data.filter((item) => {
-            const matchNIK = item.nik.toLowerCase().includes(filters.nik.toLowerCase());
-            const matchNamaDriver = item.nama_driver.toLowerCase().includes(filters.nama_driver.toLowerCase());
-            return matchNIK && matchNamaDriver;
-        });
-
+        // Filter data berdasarkan pencarian
+        const filtered = data.filter(
+            (item) =>
+                item.nik.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.nama_driver.toLowerCase().includes(searchTerm.toLowerCase()) 
+        );
         setFilteredData(filtered);
-    }, [filters, data]);
+    }, [searchTerm, data]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
+
+    const handleAddClick = () => setCurrentView("add");
 
     const handleDetailClick = (row) => {
         if (row.id_driver !== null) {
@@ -142,7 +145,7 @@ const IndexPage = () => {
             {currentView === "index" && (
                 <>
                     <div className="row">
-                        <div className="col-lg-12 mb-3">
+                        <div className="col-lg-12">
                             <div className="mb-3">
                                 <div className="divider text-start fw-bold">
                                     <div className="divider-text">
@@ -151,37 +154,17 @@ const IndexPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-lg-12">
-                            <div className="mb-3">
-                                <div className="divider text-start">
-                                    <div className="divider-text">
-                                        <span className="menu-header-text fs-6">Filter Data</span>
-                                    </div>
-                                </div>
-                            </div>
+                        <div className="col-lg-12 mb-3">
                         </div>
                         {/* Input pencarian */}
                         <div className="col-lg-12 mb-3">
-                            <div className="row">
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="" className="form-label">NIK</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={filters.nik}
-                                        onChange={(e) => setFilters({ ...filters, nik: e.target.value })}
-                                    />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="" className="form-label">Nama Driver</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={filters.nama_driver}
-                                        onChange={(e) => setFilters({ ...filters, nama_driver: e.target.value })}
-                                    />
-                                </div>
-                            </div>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Cari berdasarkan NIK atau Nama Driver..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
                         <div className="col-lg-12">
                             <DataTable
@@ -202,6 +185,12 @@ const IndexPage = () => {
                         </div>
                     </div>
                 </>
+            )}
+            {currentView === "add" && (
+                <AddPage
+                    handlePageChanges={handlePageChanges}
+                    handleBackClick={handleBackClick}
+                />
             )}
             {currentView === "detail" && (
                 <DetailPage

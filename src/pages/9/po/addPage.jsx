@@ -31,14 +31,14 @@ const AddPage = ({ handleBackClick }) => {
     };
 
     const [formData, setFormData] = useState({
-        nomor_po : "",
-        tanggal_po : "",
-        jam_pemesanan_po : "",
-        jam_muat : "",
-        id_customer : "",
-        id_armada : "",
-        id_driver : "",
-        destination : "",
+        nomor_po: "",
+        tanggal_po: "",
+        jam_pemesanan_po: "",
+        jam_muat: "",
+        id_customer: "",
+        id_armada: "",
+        id_driver: "",
+        destination: "",
         status_po: "PROSES KAS JALAN"
     });
 
@@ -67,12 +67,12 @@ const AddPage = ({ handleBackClick }) => {
 
     useEffect(() => {
         fetchCustomer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchArmada = async () => {
         try {
-            const response = await axios.get('http://localhost:3090/api/v1/armada', {
+            const response = await axios.get('http://localhost:3090/api/v1/armadas', {
                 headers: {
                     Authorization: token
                 }
@@ -80,7 +80,7 @@ const AddPage = ({ handleBackClick }) => {
             if (response.data.data.length != 0) {
                 const datafetch = response.data.data.map(dataitem => ({
                     value: dataitem.id_armada,
-                    label: dataitem.nopol_armada + ' (' + dataitem.nama_jenis_kendaraan+')'
+                    label: dataitem.nopol_armada + ' (' + dataitem.nama_jenis_kendaraan + ')'
                 }));
                 setArmadaOption(datafetch);
             } else {
@@ -99,7 +99,7 @@ const AddPage = ({ handleBackClick }) => {
 
     const fetchDriver = async () => {
         try {
-            const response = await axios.get('http://localhost:3090/api/v1/driver', {
+            const response = await axios.get('http://localhost:3090/api/v1/drivers', {
                 headers: {
                     Authorization: token
                 }
@@ -135,7 +135,7 @@ const AddPage = ({ handleBackClick }) => {
                 }
             });
             let nomor = "";
-            if (response.data.jumlahPO<10) {
+            if (response.data.jumlahPO < 10) {
                 nomor = `00${response.data.jumlahPO + 1}`
             } else if (response.data.jumlahPO < 100) {
                 nomor = `0${response.data.jumlahPO + 1}`
@@ -173,7 +173,7 @@ const AddPage = ({ handleBackClick }) => {
         };
         console.log(dataToSubmit);
         try {
-            await axios.post(`http://localhost:3090/api/v1/po`, dataToSubmit, {
+            const hasil = await axios.post(`http://localhost:3090/api/v1/po`, dataToSubmit, {
                 headers: {
                     Authorization: token
                 }
@@ -185,6 +185,50 @@ const AddPage = ({ handleBackClick }) => {
                 showConfirmButton: false,
                 timer: 2000,
             }).then(() => {
+                const dataToSubmitKasJalan = {
+                    ...formData,
+                    id_po: hasil.data.data.id_po,
+                    jenis_kas_jalan:"REGULER",
+                    jarak_isi:"0",
+                    jarak_kosong:"0",
+                    jam_tunggu:"0",
+                    gaji_driver:"0",
+                    e_toll:"0",
+                    keterangan_rute:" ",
+                    tonase:"0",
+                    status_kas_jalan:"DIBUAT",
+                };
+                axios.post(
+                    `http://localhost:3090/api/v1/kas_jalan`,
+                    dataToSubmitKasJalan,
+                    {
+                        headers: {
+                            Authorization: token,
+                        },
+                    }
+                );
+                const dataToSubmitKasJalanKosongan = {
+                    ...formData,
+                    id_po: hasil.data.data.id_po,
+                    jenis_kas_jalan:"KOSONGAN",
+                    jarak_isi:"0",
+                    jarak_kosong:"0",
+                    jam_tunggu:"0",
+                    gaji_driver:"0",
+                    e_toll:"0",
+                    keterangan_rute:" ",
+                    tonase:"0",
+                    status_kas_jalan:"DIBUAT",
+                };
+                axios.post(
+                    `http://localhost:3090/api/v1/kas_jalan`,
+                    dataToSubmitKasJalanKosongan,
+                    {
+                        headers: {
+                            Authorization: token,
+                        },
+                    }
+                );
                 handleBackClick();
             });
         } catch (error) {

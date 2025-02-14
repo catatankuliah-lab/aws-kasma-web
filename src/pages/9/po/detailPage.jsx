@@ -201,7 +201,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         if (po) {
             po.kas_jalan = typeof po.kas_jalan === "string" ? JSON.parse(po.kas_jalan) : po.kas_jalan;
-            console.log(po.kas_jalan.KOSONGAN);
+            console.log(po.kas_jalan);
             setFormData((prevData) => ({
                 nomor_po: po.nomor_po || prevData.nomor_po,
                 tanggal_po: po.tanggal_po || prevData.tanggal_po,
@@ -423,7 +423,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             required
                         />
                     </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
+                    <div className="col-md-3 col-sm-12 mb-3 d-none">
                         <input className="form-control" type="text" id="status_po" name='status_po' placeholder="" onChange={handleChange} value={formData.status_po || ""} required hidden/>
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
@@ -448,7 +448,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                         </div>
                     </div>
                     {formDataReguler && (
-                        (formDataReguler.jarak_isi !== "0" && (
                             <div className="row">
                                 <div className="col-md-3 col-sm-12 mb-3">
                                     <label htmlFor="jarak_isi" className="form-label">Jarak Isi (KM)</label>
@@ -491,8 +490,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                                     <input className="form-control" type="text" id="kas_jalan" name="kas_jalan" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah((parseInt(formDataReguler.jam_tunggu) * 11000) + (formDataReguler.jarak_isi * ((parseFloat(formDataReguler.rasio_perkalian)) + (70 * parseFloat(formDataReguler.tonase) / 1000))) + (parseFloat(formDataReguler.jarak_kosong) * (parseFloat(formDataReguler.rasio_perkalian_kosong))) + (parseFloat(formDataReguler.gaji_driver)) + (parseFloat(formDataReguler.e_toll)))} />
                                 </div>
                             </div>
-                        )
-                        ))}
+                        )}
                     <div className="col-lg-12">
                         <div className="mb-3">
                             <div className="divider text-start">
@@ -503,7 +501,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                         </div>
                     </div>
                     {formDataKosongan && (
-                        (formDataKosongan.jarak_isi !== "0" && (
                             <div className="row">
                                 <div className="col-md-3 col-sm-12 mb-3">
                                     <label htmlFor="jarak_isi" className="form-label">Jarak Isi (KM)</label>
@@ -546,8 +543,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                                     <input className="form-control" type="text" id="kas_jalan" name="kas_jalan" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah((parseInt(formDataKosongan.jam_tunggu) * 11000) + (formDataKosongan.jarak_isi * ((parseFloat(formDataKosongan.rasio_perkalian)) + (70 * parseFloat(formDataKosongan.tonase) / 1000))) + (parseFloat(formDataKosongan.jarak_kosong) * (parseFloat(formDataKosongan.rasio_perkalian_kosong))) + (parseFloat(formDataKosongan.gaji_driver)) + (parseFloat(formDataKosongan.e_toll)))} />
                                 </div>
                             </div>
-                        )
-                        ))}
+                        )}
                     <div className="col-lg-12">
                         <div className="mb-3">
                             <div className="divider text-start">
