@@ -379,7 +379,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                 <div className="mb-3">
                     <div className="divider text-start fw-bold">
                         <div className="divider-text">
-                            <span className="menu-header-text fs-6">Detail Kas Jalan</span>
+                            <span className="menu-header-text fs-6">Detail PO & Kas Jalan</span>
                         </div>
                     </div>
                 </div>
@@ -656,7 +656,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                             <div className="col-md-12 col-sm-12 mb-3">
                                 <label htmlFor="keterangan_rute" className="form-label">Keterangan Rute</label>
-                                <textarea rows={5} className="form-control" id="keterangan_rute" name="keterangan_rute" placeholder="Masukkan keterangan rute" onChange={handleChangeReguler} required value={formDataReguler.keterangan_rute}></textarea>
+                                <textarea rows={5} className="form-control" id="keterangan_rute" name="keterangan_rute" placeholder="Masukkan keterangan rute" onChange={handleChangeKosongan} required value={formDataKosongan.keterangan_rute}></textarea>
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="" className="form-label">
