@@ -112,5 +112,45 @@
             "link": "/12/checkup",
             "roles": ["12"]
         }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/1/dashboard",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "Inventaris",
+        "items": [{
+            "text": "Inventaris",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/1/dev",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/8/dashboard",
+            "roles": ["8"]
+        }]
+    },
+    {
+        "header": "Cicilan Armada",
+        "items": [{
+            "text": "Cicilan",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/8/keuangan",
+            "roles": ["8"]
+        }]
     }
 ]

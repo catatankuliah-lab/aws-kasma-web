@@ -322,7 +322,7 @@ const AddPage = ({ handleBackClick }) => {
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
                             <label htmlFor="" className="form-label">Proses</label>
-                            <button type="submit" className="btn btn-primary w-100">SIPAN DATA</button>
+                            <button type="submit" className="btn btn-primary w-100">SIMPAN DATA</button>
                         </div>
                     </div>
                 </form>
