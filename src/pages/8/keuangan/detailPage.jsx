@@ -58,10 +58,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         { value: "48", label: "48" },
     ]);
     const [selectedAngsuranCicilan, setSelectedAngsuranCicilan] = useState(null);
-
-
-    const [cicilan, setCicilan] = useState(null);
-
+    const [cicilan, setCicilan] = useState([]);
     const [jeniskendaraanOption, setJenisKendaraanOption] = useState([]);
     const [statusArmadaOption, setStatusArmadaOption] = useState([
         { value: "TERSEDIA", label: "TERSEDIA" },
@@ -79,7 +76,6 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         tanggal_angsuran: "",
         besaran_angsuran: "",
         file_angsuran: "",
-        nopol_armada: "",
     });
 
     // Ambil data Jenis Kendaraan
@@ -90,8 +86,38 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         fetchJenisKendaraan();
         if (detailId) {
             fetchArmada();
+            fetchRiwayatCicilan();
         }
     }, [token, detailId, navigate]);
+
+    const fetchRiwayatCicilan = async () => {
+        if (!token) {
+            navigate('/');
+        }
+        try {
+            const response = await axios.get(`http://localhost:3090/api/v1/cicilan/armada/${detailId}`, {
+                headers: {
+                    Authorization: token
+                }
+            });
+            console.log(response.data.data[0]);
+            if (response.data.data.length !== 0) {
+                const datafetch = response.data.data.map(dataitem => ({
+                    angsuran: dataitem.angsuran,
+                    tanggal_angsuran: dataitem.tanggal_angsuran,
+                    besaran_angsuran: dataitem.besaran_angsuran,
+                    file_angsuran: dataitem.file_angsuran
+                }));
+                setCicilan(datafetch);
+                console.log(datafetch);
+            } else {
+                setCicilan([]);
+            }
+        } catch (error) {
+            console.log(error);
+            setCicilan([]);
+        }
+    };
 
     const fetchJenisKendaraan = async () => {
         try {
@@ -184,7 +210,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                 showConfirmButton: false,
                 timer: 2000,
             }).then(() => {
-                handleBackClick();
+                fetchRiwayatCicilan();
             });
         } catch (error) {
             console.error('Error submitting data:', error);
@@ -295,12 +321,11 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                                 type="text"
                                 id="nopol_armada"
                                 name="nopol_armada"
-                                value={armada.nopol_armada}
+                                value={armada?.nopol_armada || ""}
                                 placeholder="Nopol Armada"
                                 onChange={handleChange}
                                 required
                                 readOnly
-
                             />
                         </div>
 
@@ -314,7 +339,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                                 type="text"
                                 id="lokasi_terakhir"
                                 name="lokasi_terakhir"
-                                value={armada.lokasi_terakhir}
+                                value={armada?.lokasi_terakhir || ""}
                                 placeholder="Lokasi Terakhir"
                                 onChange={handleChange}
                                 required
@@ -425,6 +450,48 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                                 >
                                     SIMPAN PERUBAHAN
                                 </button>
+                            </div>
+                            <div className="col-lg-12">
+                                <div className="mb-3">
+                                    <div className="divider text-start">
+                                        <div className="divider-text">
+                                            <span className="menu-header-text fs-6">Informasi Riwayat Cicilan Armada</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-12 mb-4 mb-md-0">
+                                <div className="table-responsive text-nowrap">
+                                    <table className="table" style={{ fontSize: "13px" }}>
+                                        <thead>
+                                            <tr>
+                                                <th className='fw-bold' >No</th>
+                                                <th className='fw-bold'>Angsuran</th>
+                                                <th className='fw-bold'>Tanggal Angsuran</th>
+                                                <th className='fw-bold'>Besaran Angsuran</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {cicilan.length > 0 ? (
+                                                cicilan.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
+                                                        <td>{item.angsuran}</td>
+                                                        <td>{item.tanggal_angsuran}</td>
+                                                        <td>{item.besaran_angsuran}</td>
+                                                        <td> <button onClick={() => handleDetailClick()} className="btn btn-link">
+                                                            <i className="bx bx-zoom-in text-priamry"></i>
+                                                        </button></td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="9" className="text-center">Data tidak tersedia</td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     )}
