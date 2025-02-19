@@ -1,5 +1,4 @@
-[
-    {
+[{
         "header": "Dashboard",
         "items": [{
             "text": "Dashboard",
@@ -42,19 +41,20 @@
     {
         "header": "Armada dan Driver",
         "items": [{
-            "text": "Armada",
-            "icon": "bx bx-file",
-            "available": true,
-            "link": "/9/armada",
-            "roles": ["9"]
-        },
-        {
-            "text": "Driver",
-            "icon": "bx bx-file",
-            "available": true,
-            "link": "/9/driver",
-            "roles": ["9"]
-        }]
+                "text": "Armada",
+                "icon": "bx bx-file",
+                "available": true,
+                "link": "/9/armada",
+                "roles": ["9"]
+            },
+            {
+                "text": "Driver",
+                "icon": "bx bx-file",
+                "available": true,
+                "link": "/9/driver",
+                "roles": ["9"]
+            }
+        ]
     },
     {
         "header": "Purchase Order",
@@ -99,18 +99,19 @@
     {
         "header": "Armada dan Maintenece",
         "items": [{
-            "text": "Armada",
-            "icon": "bx bx-file",
-            "available": true,
-            "link": "/12/armada",
-            "roles": ["12"]
-        },
-        {
-            "text": "Checkup Armada",
-            "icon": "bx bx-file",
-            "available": true,
-            "link": "/12/checkup",
-            "roles": ["12"]
-        }]
+                "text": "Armada",
+                "icon": "bx bx-file",
+                "available": true,
+                "link": "/12/armada",
+                "roles": ["12"]
+            },
+            {
+                "text": "Checkup Armada",
+                "icon": "bx bx-file",
+                "available": true,
+                "link": "/12/checkup",
+                "roles": ["12"]
+            }
+        ]
     }
 ]
