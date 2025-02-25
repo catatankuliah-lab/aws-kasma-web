@@ -124,9 +124,9 @@
         }]
     },
     {
-        "header": "Inventaris",
+        "header": "Armada",
         "items": [{
-            "text": "Inventaris",
+            "text": "Armada",
             "icon": "bx bx-file",
             "available": true,
             "link": "/1/dev",

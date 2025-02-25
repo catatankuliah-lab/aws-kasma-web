@@ -3,7 +3,7 @@ import { DashboardPage } from "../pages/DashboardPage";
 import { MaintenancePage } from "../pages/MaintenancePage";
 import LoginPage from "../pages/auth/LoginPage";
 
-import Role1Dev from "../pages/1/dev/indexPage";
+import Role1Dev from "../pages/1/dev/indexPage2";
 
 import Role7Driver from "../pages/7/driver/indexPage";
 import Role7Dashboard from "../pages/7/dashboard/indexPage";
@@ -17,7 +17,7 @@ import Role9Armada from "../pages/9/armada/indexPage";
 
 import Role10PO from "../pages/10/po/indexPage";
 
-import Role12Armada from "../pages/12/armada/indexPage";
+import Role12Armada from "../pages/12/armada/indexPage2";
 import Role12Dashboard from "../pages/12/dashboard/indexPage";
 
 const AppRoutes = () => {
