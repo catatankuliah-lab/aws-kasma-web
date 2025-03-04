@@ -20,6 +20,8 @@ import Role10PO from "../pages/10/po/indexPage";
 import Role12Armada from "../pages/12/armada/indexPage2";
 import Role12Dashboard from "../pages/12/dashboard/indexPage";
 
+import Role13PO from "../pages/13/po/indexPage";
+
 const AppRoutes = () => {
     const id_role = localStorage.getItem('id_role');
     return (
@@ -64,6 +66,12 @@ const AppRoutes = () => {
                 <>
                     <Route path="/12/dashboard" element={<Role12Dashboard />} />
                     <Route path="/12/armada" element={<Role12Armada />} />
+                </>
+            )}
+            {id_role == "13" && (
+                <>
+                    <Route path="/13/dashboard" element={<DashboardPage />} />
+                    <Route path="/13/po" element={<Role13PO />} />
                 </>
             )}
             <Route path="*" element={<MaintenancePage />} />
