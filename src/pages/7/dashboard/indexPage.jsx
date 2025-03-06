@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import axios from "axios";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -24,7 +24,7 @@ const IndexPage = () => {
             }
 
             try {
-                const response = await axios.get("https://apikasma.delapandelapanlogistics.com/api/v1/driver/availability", {
+                const response = await axios.get("http://localhost:3090/api/v1/driver/availability", {
                     headers: { Authorization: token },
                 });
                 console.log(response.data.data.available[0].available);

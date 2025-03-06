@@ -31,7 +31,7 @@ const AddPage = ({ handleBackClick }) => {
         };
         try {
             console.log(dataToSubmit);
-            const response = await axios.post(`https://apikasma.delapandelapanlogistics.com/api/v1/customer`, dataToSubmit, {
+            const response = await axios.post(`http://localhost:3090/api/v1/customer`, dataToSubmit, {
                 headers: {
                     Authorization: token
                 }

@@ -73,7 +73,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
-                const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/customer', {
+                const response = await axios.get('http://localhost:3090/api/v1/customer', {
                     headers: {
                         Authorization: token
                     }
@@ -114,7 +114,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchArmada = async () => {
             try {
-                const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/armadas', {
+                const response = await axios.get('http://localhost:3090/api/v1/armadas', {
                     headers: {
                         Authorization: token
                     }
@@ -150,7 +150,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchArmada = async () => {
             try {
-                const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/drivers', {
+                const response = await axios.get('http://localhost:3090/api/v1/drivers', {
                     headers: {
                         Authorization: token
                     }
@@ -184,7 +184,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchPO = async () => {
             try {
-                const response = await axios.get(`https://apikasma.delapandelapanlogistics.com/api/v1/po/${detailId}`,
+                const response = await axios.get(`http://localhost:3090/api/v1/po/${detailId}`,
                     {
                         headers: {
                             Authorization: token,
@@ -284,7 +284,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         dataKasjaRegulertoSubmit.append("status_kas_jalan", "DIBUAT");
         try {
             await axios.put(
-                `https://apikasma.delapandelapanlogistics.com/api/v1/kasjalan/${formDataReguler.id_kas_jalan}`,
+                `http://localhost:3090/api/v1/kasjalan/${formDataReguler.id_kas_jalan}`,
                 dataKasjaRegulertoSubmit,
                 {
                     headers: {
@@ -332,7 +332,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         console.log([...dataKasjaKosongantoSubmit.entries()]);
         try {
             const response = await axios.put(
-                `https://apikasma.delapandelapanlogistics.com/api/v1/kasjalan/${formDataKosongan.id_kas_jalan}`,
+                `http://localhost:3090/api/v1/kasjalan/${formDataKosongan.id_kas_jalan}`,
                 dataKasjaKosongantoSubmit,
                 {
                     headers: {

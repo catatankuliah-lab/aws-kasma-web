@@ -52,7 +52,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
-                const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/customer', {
+                const response = await axios.get('http://localhost:3090/api/v1/customer', {
                     headers: {
                         Authorization: token
                     }
@@ -98,7 +98,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchArmada = async () => {
             try {
-                const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/armada', {
+                const response = await axios.get('http://localhost:3090/api/v1/armada', {
                     headers: {
                         Authorization: token
                     }
@@ -139,7 +139,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchArmada = async () => {
             try {
-                const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/driver', {
+                const response = await axios.get('http://localhost:3090/api/v1/driver', {
                     headers: {
                         Authorization: token
                     }
@@ -178,7 +178,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchPO = async () => {
             try {
-                const response = await axios.get(`https://apikasma.delapandelapanlogistics.com/api/v1/po/${detailId}`,
+                const response = await axios.get(`http://localhost:3090/api/v1/po/${detailId}`,
                     {
                         headers: {
                             Authorization: token,
@@ -291,7 +291,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         dataPOtoSubmit.append('status_po', formData.status_po);
 
         try {
-            await axios.put(`https://apikasma.delapandelapanlogistics.com/api/v1/po/${detailId}`, dataPOtoSubmit, {
+            await axios.put(`http://localhost:3090/api/v1/po/${detailId}`, dataPOtoSubmit, {
                 headers: {
                     Authorization: token,
                     "Content-Type": "multipart/form-data",

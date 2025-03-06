@@ -23,7 +23,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
-                const response = await axios.get( `https://apikasma.delapandelapanlogistics.com/api/v1/customer/${detailId}`,
+                const response = await axios.get( `http://localhost:3090/api/v1/customer/${detailId}`,
                     {
                         headers: {
                             Authorization: token,
@@ -73,7 +73,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         dataCustomerToSubmit.append('nomor_penanggung_jawab_customer', formData.nomor_penanggung_jawab_customer);
         dataCustomerToSubmit.append('jumlah_order', formData.jumlah_order);
         try {
-            await axios.put(`https://apikasma.delapandelapanlogistics.com/api/v1/customer/${detailId}`, dataCustomerToSubmit, {
+            await axios.put(`http://localhost:3090/api/v1/customer/${detailId}`, dataCustomerToSubmit, {
                 headers: {
                     'Authorization': token,
                     'Content-Type': 'multipart/form-data',
