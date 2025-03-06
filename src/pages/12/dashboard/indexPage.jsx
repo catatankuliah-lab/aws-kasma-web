@@ -25,7 +25,7 @@ const IndexPage = () => {
                 return;
             }
             try {
-                const response = await axios.get("http://localhost:3090/api/v1/armada/availability", {
+                const response = await axios.get("https://apikasma.delapandelapanlogistics.com/api/v1/armada/availability", {
                     headers: { Authorization: token },
                 });
                 console.log(response.data.data.tersedia[0].tersedia);

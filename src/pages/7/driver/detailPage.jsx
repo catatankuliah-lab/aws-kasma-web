@@ -40,7 +40,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
     useEffect(() => {
         const fetchDriver = async () => {
             try {
-                const response = await axios.get(`http://localhost:3090/api/v1/driver/${detailId}`,
+                const response = await axios.get(`https://apikasma.delapandelapanlogistics.com/api/v1/driver/${detailId}`,
                     {
                         headers: {
                             Authorization: token,
@@ -114,7 +114,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         dataToSubmit.append('username', formData.nama_driver.replace(/[\s,.`]/g, '').toLowerCase());
         dataToSubmit.append('password', formData.nama_driver.replace(/[\s,.`]/g, '').toLowerCase());
         dataToSubmit.append('status_user', 'AKTIF');
-        await axios.put(`http://localhost:3090/api/v1/user/${formData.id_user}`, dataToSubmit, {
+        await axios.put(`https://apikasma.delapandelapanlogistics.com/api/v1/user/${formData.id_user}`, dataToSubmit, {
             headers: {
                 'Authorization': token,
                 'Content-Type': 'multipart/form-data',
@@ -133,7 +133,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         dataDriverToSubmit.append('status_driver', formData.status_driver);
         try {
             console.log(formData.foto_ktp_driver);
-            await axios.put(`http://localhost:3090/api/v1/driver/${detailId}`, dataDriverToSubmit, {
+            await axios.put(`https://apikasma.delapandelapanlogistics.com/api/v1/driver/${detailId}`, dataDriverToSubmit, {
                 headers: {
                     'Authorization': token,
                     'Content-Type': 'multipart/form-data',

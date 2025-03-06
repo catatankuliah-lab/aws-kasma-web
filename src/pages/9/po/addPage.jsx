@@ -44,7 +44,7 @@ const AddPage = ({ handleBackClick }) => {
 
     const fetchCustomer = async () => {
         try {
-            const response = await axios.get('http://localhost:3090/api/v1/customer', {
+            const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/customer', {
                 headers: {
                     Authorization: token
                 }
@@ -72,7 +72,7 @@ const AddPage = ({ handleBackClick }) => {
 
     const fetchArmada = async () => {
         try {
-            const response = await axios.get('http://localhost:3090/api/v1/armadas', {
+            const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/armadas', {
                 headers: {
                     Authorization: token
                 }
@@ -99,7 +99,7 @@ const AddPage = ({ handleBackClick }) => {
 
     const fetchDriver = async () => {
         try {
-            const response = await axios.get('http://localhost:3090/api/v1/drivers', {
+            const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/drivers', {
                 headers: {
                     Authorization: token
                 }
@@ -129,7 +129,7 @@ const AddPage = ({ handleBackClick }) => {
             const bulanSekarang = new Date().getMonth() + 1;
             const bulanFormatted = String(bulanSekarang).padStart(2, "0");
             const tahunSekarang = new Date().getFullYear();
-            const response = await axios.get(`http://localhost:3090/api/v1/po/jumlahpobulanan/${bulanSekarang}`, {
+            const response = await axios.get(`https://apikasma.delapandelapanlogistics.com/api/v1/po/jumlahpobulanan/${bulanSekarang}`, {
                 headers: {
                     Authorization: token
                 }
@@ -172,7 +172,7 @@ const AddPage = ({ handleBackClick }) => {
             nomor_po: nomorPO
         };
         try {
-            const hasil = await axios.post(`http://localhost:3090/api/v1/po`, dataToSubmit, {
+            const hasil = await axios.post(`https://apikasma.delapandelapanlogistics.com/api/v1/po`, dataToSubmit, {
                 headers: {
                     Authorization: token
                 }
@@ -198,7 +198,7 @@ const AddPage = ({ handleBackClick }) => {
                     status_kas_jalan:"DIBUAT",
                 };
                 axios.post(
-                    `http://localhost:3090/api/v1/kas_jalan`,
+                    `https://apikasma.delapandelapanlogistics.com/api/v1/kas_jalan`,
                     dataToSubmitKasJalan,
                     {
                         headers: {
@@ -220,7 +220,7 @@ const AddPage = ({ handleBackClick }) => {
                     status_kas_jalan:"DIBUAT",
                 };
                 axios.post(
-                    `http://localhost:3090/api/v1/kas_jalan`,
+                    `https://apikasma.delapandelapanlogistics.com/api/v1/kas_jalan`,
                     dataToSubmitKasJalanKosongan,
                     {
                         headers: {

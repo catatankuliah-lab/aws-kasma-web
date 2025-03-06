@@ -32,7 +32,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
     useEffect(() => {
         const fetchDriver = async () => {
             try {
-                const response = await axios.get( `http://localhost:3090/api/v1/driver/${detailId}`,
+                const response = await axios.get( `https://apikasma.delapandelapanlogistics.com/api/v1/driver/${detailId}`,
                     {
                         headers: {
                             Authorization: token,

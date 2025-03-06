@@ -82,7 +82,7 @@ const IndexPage = () => {
             navigate("/");
         }
         try {
-            const response = await axios.get(`http://localhost:3090/api/v1/armada`, {
+            const response = await axios.get(`https://apikasma.delapandelapanlogistics.com/api/v1/armada`, {
                 headers: { Authorization: token },
                 params: { page, limit },
             });

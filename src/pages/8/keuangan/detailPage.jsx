@@ -95,7 +95,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
             navigate('/');
         }
         try {
-            const response = await axios.get(`http://localhost:3090/api/v1/cicilan/armada/${detailId}`, {
+            const response = await axios.get(`https://apikasma.delapandelapanlogistics.com/api/v1/cicilan/armada/${detailId}`, {
                 headers: {
                     Authorization: token
                 }
@@ -121,7 +121,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
 
     const fetchJenisKendaraan = async () => {
         try {
-            const response = await axios.get("http://localhost:3090/api/v1/jenis-kendaraan", {
+            const response = await axios.get("https://apikasma.delapandelapanlogistics.com/api/v1/jenis-kendaraan", {
                 headers: { Authorization: token },
             });
             const jenisKendaraan = response.data.data.map((item) => ({
@@ -136,7 +136,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
 
     const fetchArmada = async () => {
         try {
-            const response = await axios.get(`http://localhost:3090/api/v1/armada/${detailId}`, {
+            const response = await axios.get(`https://apikasma.delapandelapanlogistics.com/api/v1/armada/${detailId}`, {
                 headers: { Authorization: token },
             });
             console.log(response.data.data);
@@ -197,7 +197,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         datatoSubmit.append("file_angsuran", "bukti.jpg");
         console.log(Object.fromEntries(datatoSubmit.entries()));
         try {
-            const response = await axios.post(`http://localhost:3090/api/v1/cicilan`, datatoSubmit, {
+            const response = await axios.post(`https://apikasma.delapandelapanlogistics.com/api/v1/cicilan`, datatoSubmit, {
                 headers: {
                     Authorization: token,
                     "Content-Type": "multipart/form-data",
@@ -235,7 +235,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         dataArmadaToSubmit.append("status_armada", formData.status_armada);
 
         try {
-            await axios.put(`http://localhost:3090/api/v1/armada/${detailId}`, dataArmadaToSubmit, {
+            await axios.put(`https://apikasma.delapandelapanlogistics.com/api/v1/armada/${detailId}`, dataArmadaToSubmit, {
                 headers: {
                     Authorization: token,
                     "Content-Type": "multipart/form-data",

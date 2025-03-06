@@ -39,7 +39,7 @@ const AddPage = ({ handleBackClick }) => {
             navigate('/');
         }
         try {
-            const response = await axios.get('http://localhost:3090/api/v1/jenis-kendaraan', {
+            const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/jenis-kendaraan', {
                 headers: {
                     Authorization: token
                 }
@@ -91,7 +91,7 @@ const AddPage = ({ handleBackClick }) => {
         };
         try {
             console.log(dataToSubmit);
-            const response = await axios.post(`http://localhost:3090/api/v1/armada`, dataToSubmit, {
+            const response = await axios.post(`https://apikasma.delapandelapanlogistics.com/api/v1/armada`, dataToSubmit, {
                 headers: {
                     Authorization: token
                 }
