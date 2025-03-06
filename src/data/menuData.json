@@ -99,19 +99,85 @@
     {
         "header": "Armada dan Maintenece",
         "items": [{
-                "text": "Armada",
-                "icon": "bx bx-file",
-                "available": true,
-                "link": "/12/armada",
-                "roles": ["12"]
-            },
-            {
-                "text": "Checkup Armada",
-                "icon": "bx bx-file",
-                "available": true,
-                "link": "/12/checkup",
-                "roles": ["12"]
-            }
-        ]
+            "text": "Armada",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/12/armada",
+            "roles": ["12"]
+        },
+        {
+            "text": "Checkup Armada",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/12/checkup",
+            "roles": ["12"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/1/dashboard",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "Armada",
+        "items": [{
+            "text": "Armada",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/1/dev",
+            "roles": ["1"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/8/dashboard",
+            "roles": ["8"]
+        }]
+    },
+    {
+        "header": "Cicilan Armada",
+        "items": [{
+            "text": "Cicilan",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/8/keuangan",
+            "roles": ["8"]
+        },
+        {
+            "text": "Riwayat Cicilan",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/8/riwayatcicilan",
+            "roles": ["8"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/13/dashboard",
+            "roles": ["13"]
+        }]
+    },
+    {
+        "header": "PO",
+        "items": [{
+            "text": "PO",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/13/po",
+            "roles": ["13"]
+        }]
     }
 ]

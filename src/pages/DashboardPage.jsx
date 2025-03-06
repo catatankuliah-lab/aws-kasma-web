@@ -38,7 +38,7 @@ export const DashboardPage = () => {
                     </div>
                 </div>
             </div>
-            <div className="row">
+            <div className="row d-none">
                 <div className="col-lg-6 col-md-12 col-6 mb-6">
                     <div className="card h-100">
                         <div className="card-body">.

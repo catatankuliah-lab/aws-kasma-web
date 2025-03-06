@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
-import AddPage from "./addPage";
 import DetailPage from "./detailPage";
 import { useNavigate } from "react-router-dom";
 
 const IndexPage = () => {
     const token = localStorage.getItem("token");
+    const id_user = localStorage.getItem("id_user");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -127,13 +127,23 @@ const IndexPage = () => {
         if (!token) {
             navigate("/");
         }
-
         try {
-            const response = await axios.get("https://apikasma.delapandelapanlogistics.com/api/v1/po", {
+            console.log(id_user,
+                page,
+                limit,
+                filters.nomor_po,
+                filters.customer,
+                filters.nopol_armada,
+                filters.nama_driver,
+                filters.startDate,
+                filters.endDate,
+                filters.status_po);
+            const response = await axios.get(`http://localhost:3090/api/v1/po/driver/${id_user}`, {
                 headers: { Authorization: token },
                 params: {
                     page,
                     limit,
+                    id_user,
                     nomor_po: filters.nomor_po,
                     customer: filters.customer,
                     nopol_armada: filters.nopol_armada,
@@ -143,7 +153,7 @@ const IndexPage = () => {
                     status_po: filters.status_po
                 },
             });
-
+            
             const fetchedData = Array.isArray(response.data.data)
                 ? response.data.data
                 : [response.data.data];

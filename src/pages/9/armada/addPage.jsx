@@ -42,7 +42,7 @@ const AddPage = ({ handleBackClick }) => {
             status_user: "AKTIF",
         };
         try {
-            const response = await axios.post(`http://localhost:3090/api/v1/user`, dataToSubmit, {
+            const response = await axios.post(`https://apikasma.delapandelapanlogistics.com/api/v1/user`, dataToSubmit, {
                 headers: {
                     Authorization: token
                 }
@@ -70,7 +70,7 @@ const AddPage = ({ handleBackClick }) => {
                     status_driver: "TERSEDIA",
                 };
                 axios.post(
-                    `http://localhost:3090/api/v1/driver`,
+                    `https://apikasma.delapandelapanlogistics.com/api/v1/driver`,
                     dataToSubmitDriver,
                     {
                         headers: {

@@ -32,6 +32,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         status_driver: "",
         id_vendor: "",
         id_jenis_mobil: "",
+        foto_ktp_driver: null,
         masa_berlaku_sim: ""
     });
 
@@ -39,7 +40,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
     useEffect(() => {
         const fetchDriver = async () => {
             try {
-                const response = await axios.get(`http://localhost:3090/api/v1/driver/${detailId}`,
+                const response = await axios.get(`https://apikasma.delapandelapanlogistics.com/api/v1/driver/${detailId}`,
                     {
                         headers: {
                             Authorization: token,
@@ -72,6 +73,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                 nama_kontak_darurat_driver: driver.nama_kontak_darurat_driver || prevData.nama_kontak_darurat_driver,
                 telpon_kontak_darurat_driver: driver.telpon_kontak_darurat_driver || prevData.telpon_kontak_darurat_driver,
                 alamat_driver: driver.alamat_driver || prevData.alamat_driver,
+                foto_ktp_driver: driver.foto_ktp_driver || prevData.foto_ktp_driver,
                 status_driver: driver.status_driver || prevData.status_driver,
                 id_vendor: driver.id_vendor || prevData.id_vendor,
                 id_jenis_mobil: driver.id_jenis_mobil || prevData.id_jenis_mobil,
@@ -112,7 +114,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         dataToSubmit.append('username', formData.nama_driver.replace(/[\s,.`]/g, '').toLowerCase());
         dataToSubmit.append('password', formData.nama_driver.replace(/[\s,.`]/g, '').toLowerCase());
         dataToSubmit.append('status_user', 'AKTIF');
-        await axios.put(`http://localhost:3090/api/v1/user/${formData.id_user}`, dataToSubmit, {
+        await axios.put(`https://apikasma.delapandelapanlogistics.com/api/v1/user/${formData.id_user}`, dataToSubmit, {
             headers: {
                 'Authorization': token,
                 'Content-Type': 'multipart/form-data',
@@ -126,11 +128,12 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         dataDriverToSubmit.append('nama_kontak_darurat_driver', formData.nama_kontak_darurat_driver);
         dataDriverToSubmit.append('telpon_kontak_darurat_driver', formData.telpon_kontak_darurat_driver);
         dataDriverToSubmit.append('masa_berlaku_sim', formData.masa_berlaku_sim);
-        dataDriverToSubmit.append('foto_ktp_driver', 'foto_ktp_driver.png');
+        dataDriverToSubmit.append('foto_ktp_driver', formData.foto_ktp_driver);
         dataDriverToSubmit.append('foto_sim_driver', 'foto_sim_driver.png');
         dataDriverToSubmit.append('status_driver', formData.status_driver);
         try {
-            await axios.put(`http://localhost:3090/api/v1/driver/${detailId}`, dataDriverToSubmit, {
+            console.log(formData.foto_ktp_driver);
+            await axios.put(`https://apikasma.delapandelapanlogistics.com/api/v1/driver/${detailId}`, dataDriverToSubmit, {
                 headers: {
                     'Authorization': token,
                     'Content-Type': 'multipart/form-data',
@@ -180,166 +183,168 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                 </div>
             </div>
             <div className="col-md-12 mt-3">
-                <div className="row">
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="nik" className="form-label">
-                            NIK
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="nik"
-                            name="nik"
-                            placeholder=""
-                            ref={inputRef}
-                            value={formData.nik}
-                            onChange={handleChange}
-                            required
-                        />
+                <form encType="multipart/form-data">
+                    <div className="row">
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label htmlFor="nik" className="form-label">
+                                NIK
+                            </label>
+                            <input
+                                className="form-control"
+                                type="text"
+                                id="nik"
+                                name="nik"
+                                placeholder=""
+                                ref={inputRef}
+                                value={formData.nik}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label htmlFor="nama_driver" className="form-label">
+                                Nama Lengkap
+                            </label>
+                            <input
+                                className="form-control"
+                                type="text"
+                                id="nama_driver"
+                                name="nama_driver"
+                                placeholder="Nama Lengkap"
+                                value={formData.nama_driver}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label htmlFor="telpon_driver" className="form-label">
+                                Telpon Driver
+                            </label>
+                            <input
+                                className="form-control"
+                                type="text"
+                                id="telpon_driver"
+                                name="telpon_driver"
+                                placeholder="Telpon Driver"
+                                value={formData.telpon_driver}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label
+                                htmlFor="nama_kontak_darurat_driver"
+                                className="form-label"
+                            >
+                                Nama Kontak Darurat
+                            </label>
+                            <input
+                                className="form-control"
+                                type="text"
+                                id="nama_kontak_darurat_driver"
+                                name="nama_kontak_darurat_driver"
+                                placeholder="Nama Kontak Darurat"
+                                value={formData.nama_kontak_darurat_driver}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label
+                                htmlFor="telpon_kontak_darurat_driver"
+                                className="form-label"
+                            >
+                                Telpon Kontak Darurat
+                            </label>
+                            <input
+                                className="form-control"
+                                type="text"
+                                id="telpon_kontak_darurat_driver"
+                                name="telpon_kontak_darurat_driver"
+                                placeholder="Telpon Kontak Darurat"
+                                value={formData.telpon_kontak_darurat_driver}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label
+                                htmlFor="masa_berlaku_sim"
+                                className="form-label"
+                            >
+                                Masa Berlaku SIM
+                            </label>
+                            <input
+                                className="form-control text-uppercase"
+                                type="date"
+                                id="masa_berlaku_sim"
+                                name="masa_berlaku_sim"
+                                placeholder=""
+                                value={formData.masa_berlaku_sim}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label
+                                htmlFor="foto_ktp_driver"
+                                className="form-label"
+                            >
+                                Foto KTP
+                            </label>
+                            <input
+                                className="form-control"
+                                type="file"
+                                id="foto_ktp_driver"
+                                name="foto_ktp_driver"
+                                placeholder=""
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label
+                                htmlFor="foto_sim_driver"
+                                className="form-label"
+                            >
+                                Foto SIM
+                            </label>
+                            <input
+                                className="form-control"
+                                type="file"
+                                id="foto_sim_driver"
+                                name="foto_sim_driver"
+                                placeholder=""
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label htmlFor="status_driver" className="form-label">
+                                Status Driver
+                            </label>
+                            <Select
+                                id="status_driver"
+                                name="status_driver"
+                                value={selectedStatusDriver}
+                                onChange={handleStatusDriverChange}
+                                options={statusDriverOption}
+                                placeholder="Pilih Status Driver"
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label htmlFor="" className="form-label">
+                                Proses
+                            </label>
+                            <button
+                                type="button"
+                                onClick={handleUpdate}
+                                className="btn btn-primary w-100"
+                            >
+                                SIMPAN PERUBAHAN
+                            </button>
+                        </div>
                     </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="nama_driver" className="form-label">
-                            Nama Lengkap
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="nama_driver"
-                            name="nama_driver"
-                            placeholder="Nama Lengkap"
-                            value={formData.nama_driver}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="telpon_driver" className="form-label">
-                            Telpon Driver
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="telpon_driver"
-                            name="telpon_driver"
-                            placeholder="Telpon Driver"
-                            value={formData.telpon_driver}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="nama_kontak_darurat_driver"
-                            className="form-label"
-                        >
-                            Nama Kontak Darurat
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="nama_kontak_darurat_driver"
-                            name="nama_kontak_darurat_driver"
-                            placeholder="Nama Kontak Darurat"
-                            value={formData.nama_kontak_darurat_driver}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="telpon_kontak_darurat_driver"
-                            className="form-label"
-                        >
-                            Telpon Kontak Darurat
-                        </label>
-                        <input
-                            className="form-control"
-                            type="text"
-                            id="telpon_kontak_darurat_driver"
-                            name="telpon_kontak_darurat_driver"
-                            placeholder="Telpon Kontak Darurat"
-                            value={formData.telpon_kontak_darurat_driver}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="masa_berlaku_sim"
-                            className="form-label"
-                        >
-                            Masa Berlaku SIM
-                        </label>
-                        <input
-                            className="form-control text-uppercase"
-                            type="date"
-                            id="masa_berlaku_sim"
-                            name="masa_berlaku_sim"
-                            placeholder=""
-                            value={formData.masa_berlaku_sim}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="foto_ktp_driver"
-                            className="form-label"
-                        >
-                            Foto KTP
-                        </label>
-                        <input
-                            className="form-control"
-                            type="file"
-                            id="foto_ktp_driver"
-                            name="foto_ktp_driver"
-                            placeholder=""
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label
-                            htmlFor="foto_sim_driver"
-                            className="form-label"
-                        >
-                            Foto SIM
-                        </label>
-                        <input
-                            className="form-control"
-                            type="file"
-                            id="foto_sim_driver"
-                            name="foto_sim_driver"
-                            placeholder=""
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="status_driver" className="form-label">
-                            Status Driver
-                        </label>
-                        <Select
-                            id="status_driver"
-                            name="status_driver"
-                            value={selectedStatusDriver}
-                            onChange={handleStatusDriverChange}
-                            options={statusDriverOption}
-                            placeholder="Pilih Status Driver"
-                            required
-                        />
-                    </div>
-                    <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="" className="form-label">
-                            Proses
-                        </label>
-                        <button
-                            type="button"
-                            onClick={handleUpdate}
-                            className="btn btn-primary w-100"
-                        >
-                            SIMPAN PERUBAHAN
-                        </button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     );

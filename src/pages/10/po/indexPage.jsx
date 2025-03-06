@@ -128,7 +128,7 @@ const IndexPage = () => {
         }
 
         try {
-            const response = await axios.get("http://localhost:3090/api/v1/po", {
+            const response = await axios.get("https://apikasma.delapandelapanlogistics.com/api/v1/po", {
                 headers: { Authorization: token },
                 params: {
                     page,

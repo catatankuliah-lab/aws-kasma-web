@@ -39,7 +39,7 @@ const AddPage = ({ handleBackClick }) => {
             navigate('/');
         }
         try {
-            const response = await axios.get('https://apikasma.delapandelapanlogistics.com/api/v1/jenis-kendaraan', {
+            const response = await axios.get('http://localhost:3090/api/v1/driver', {
                 headers: {
                     Authorization: token
                 }
@@ -47,8 +47,8 @@ const AddPage = ({ handleBackClick }) => {
             console.log(response);
             if (response.data.data.length !== 0) {
                 const datafetch = response.data.data.map(dataitem => ({
-                    value: dataitem.id_jenis_kendaraan,
-                    label: dataitem.nama_jenis_kendaraan
+                    value: dataitem.id_driver,
+                    label: dataitem.nama_driver
                 }));
                 setJenisKendaraanOption(datafetch);
             } else {
@@ -91,7 +91,7 @@ const AddPage = ({ handleBackClick }) => {
         };
         try {
             console.log(dataToSubmit);
-            const response = await axios.post(`https://apikasma.delapandelapanlogistics.com/api/v1/armada`, dataToSubmit, {
+            const response = await axios.post(`http://localhost:3090/api/v1/armada`, dataToSubmit, {
                 headers: {
                     Authorization: token
                 }
@@ -132,26 +132,40 @@ const AddPage = ({ handleBackClick }) => {
                     Klik <button className="fw-bold btn btn-link p-0" onClick={() => handleBackClick()}>disini</button> untuk kembali ke menu utama Armada.
                 </div>
             </div>
-        
+
             <div className="col-md-12 mt-3">
                 <form id="form" onSubmit={handleSubmit}>
                     <div className="row">
-                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
-                            <label htmlFor="id_jenis_kendaraan" className="form-label">Jenis Kendaraan</label>
-                            <Select id="id_jenis_kendaraan" name="id_jenis_kendaraan" value={selectedJenisKendaraan} onChange={handleJenisKendaraanChange} options={jeniskendaraanOption} placeholder="Pilih Jenis Kendaraan"
-                            />
-                        </div>
                         <div className="col-md-3 col-sm-12 mb-3">
                             <label htmlFor="nopol_armada" className="form-label">Nopol Armada</label>
                             <input className="form-control" type="text" id="nopol_armada" name='nopol_armada' placeholder="Nopol Armada" onChange={handleChange} required />
                         </div>
+                        <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                            <label htmlFor="id_jenis_kendaraan" className="form-label">Driver Aktif</label>
+                            <Select id="id_jenis_kendaraan" name="id_jenis_kendaraan" value={selectedJenisKendaraan} onChange={handleJenisKendaraanChange} options={jeniskendaraanOption} placeholder="Pilih Driver"
+                            />
+                        </div>
                         <div className="col-md-3 col-sm-12 mb-3">
-                            <label htmlFor="lokasi_terakhir" className="form-label">Lokasi Terakhir</label>
-                            <input className="form-control" type="text" id="lokasi_terakhir" name='lokasi_terakhir' placeholder="Lokasi Terakhir" onChange={handleChange} required />
+                            <label htmlFor="nopol_armada" className="form-label">Nomor Rangka</label>
+                            <input className="form-control" type="text" id="nopol_armada" name='nopol_armada' placeholder="Nomor Rangka" onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label htmlFor="nopol_armada" className="form-label">Nomor Mesin</label>
+                            <input className="form-control" type="text" id="nopol_armada" name='nopol_armada' placeholder="Nomor Mesin" onChange={handleChange} required />
+                        </div>
+                        <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                            <label htmlFor="id_jenis_kendaraan" className="form-label">Driver Utama</label>
+                            <Select id="id_jenis_kendaraan" name="id_jenis_kendaraan" value={selectedJenisKendaraan} onChange={handleJenisKendaraanChange} options={jeniskendaraanOption} placeholder="Pilih Driver"
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                            <label htmlFor="id_jenis_kendaraan" className="form-label">Driver Serep</label>
+                            <Select id="id_jenis_kendaraan" name="id_jenis_kendaraan" value={selectedJenisKendaraan} onChange={handleJenisKendaraanChange} options={jeniskendaraanOption} placeholder="Pilih Driver"
+                            />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
                             <label htmlFor="" className="form-label">Proses</label>
-                            <button type="submit" className="btn btn-primary w-100">SELANJUTNYA</button>
+                            <button type="submit" className="btn btn-primary w-100">SIMPAN DATA</button>
                         </div>
                     </div>
                 </form>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
-import AddPage from "./addPage";
 import DetailPage from "./detailPage";
 import { useNavigate } from "react-router-dom";
 
@@ -37,21 +36,9 @@ const IndexPage = () => {
             width: "50px",
         },
         {
-            name: "Jenis kendaraan",
-            selector: (row) => row.nama_jenis_kendaraan,
-            sortable: true,
-            width: "200px",
-        },
-        {
             name: "NOPOL",
             selector: (row) => row.nopol_armada,
             sortable: true,
-            width: "200px",
-        },
-        {
-            name: "Status",
-            selector: (row) => row.status_armada,
-            sortable: true
         },
         {
             name: "",
@@ -153,15 +140,6 @@ const IndexPage = () => {
             {currentView === "index" && (
                 <>
                     <div className="row">
-                        <div className="col-lg-12">
-                            <div className="mb-3">
-                                <div className="divider text-start fw-bold">
-                                    <div className="divider-text">
-                                        <span className="menu-header-text fs-6">Data Armada</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         {/* Input pencarian */}
                         <div className="col-lg-12 mb-3">
                             <input
@@ -191,12 +169,6 @@ const IndexPage = () => {
                         </div>
                     </div>
                 </>
-            )}
-            {currentView === "add" && (
-                <AddPage
-                    handlePageChanges={handlePageChanges}
-                    handleBackClick={handleBackClick}
-                />
             )}
             {currentView === "detail" && (
                 <DetailPage

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import axios from "axios";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -10,7 +10,9 @@ const IndexPage = () => {
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
     const [tersedia, setTersedia] = useState(0);
-    const [tidaktersedia, setTidakTersedia] = useState(0);
+    const [muat, setMuat] = useState(0);
+    const [bongkar, setBongkar] = useState(0);
+    const [selesai, setSelesai] = useState(0);
 
     useEffect(() => {
         if (!token) navigate("/");
@@ -22,14 +24,15 @@ const IndexPage = () => {
                 console.error("No token provided");
                 return;
             }
-
             try {
-                const response = await axios.get("https://apikasma.delapandelapanlogistics.com/api/v1/driver/availability", {
+                const response = await axios.get("http://localhost:3090/api/v1/armada/availability", {
                     headers: { Authorization: token },
                 });
-                console.log(response.data.data.available[0].available);
-                setTersedia(response.data.data.available[0].available);
-                setTidakTersedia(response.data.data.unavailable[0].unavailable);
+                console.log(response.data.data.tersedia[0].tersedia);
+                setTersedia(response.data.data.tersedia[0].tersedia);
+                setMuat(response.data.data.muat[0].muat);
+                setBongkar(response.data.data.bongkar[0].bongkar);
+                setSelesai(response.data.data.selesai[0].selesai);
             } catch (error) {
                 console.error("Error fetching driver availability:", error.response?.status, error.response?.data);
             }
@@ -39,12 +42,12 @@ const IndexPage = () => {
     }, [token]);
 
     const data = {
-        labels: ["Tersedia", "Tidak Tersedia"],
+        labels: ["Tersedia", "Bongkar", "Muat", "Selesai"],
         datasets: [
             {
-                label: "Jumlah Driver",
-                data: [tersedia, tidaktersedia],
-                backgroundColor: ["#2196F3", "#FF7043"],
+                label: "Jumlah Armada",
+                data: [tersedia, muat, bongkar, selesai],
+                backgroundColor: ["#2196F3", "#FF7043", "#39FF14", "#FCE205" ],
                 borderColor: ["#ffffff"],
                 borderWidth: 2,
             },
@@ -72,11 +75,11 @@ const IndexPage = () => {
                             <div className="col-sm-7">
                                 <div className="card-body">
                                     <h5 className="card-title text-primary">
-                                        DASHBOARD DRIVER
+                                        DASHBOARD ARMADA
                                     </h5>
                                     <blockquote className="blockquote mt-3">
-                                    <p className="fw-bold">Pantau aktivitas dan kinerja pengemudi secara real-time dengan data yang akurat dan terintegrasi.</p>
-                                </blockquote>
+                                        <p className="fw-bold">Monitoring dan manajemen armada secara efisien dengan data yang akurat dan terstruktur.</p>
+                                    </blockquote>
                                     <figcaption className="blockquote-footer">
                                         PT. Delapan Delapan Logistics, {(new Date().toLocaleDateString('id-ID', { month: 'long' }))} {(new Date().getFullYear())}
                                     </figcaption>
@@ -101,7 +104,7 @@ const IndexPage = () => {
                 <div className="col-lg-12 col-md-12 col-6 mb-6">
                     <div className="card h-100 pb-3">
                         <div className="card-body" style={{ height: "300px", position: "relative", padding: "0", overflow: "hidden" }}>
-                            <h5 className="card-title text-primary" style={{ position: "absolute", top: "10px", left: "20px", zIndex: 10 }}>AKTIF & TIDAK AKTIF DRIVER</h5>
+                            <h5 className="card-title text-primary" style={{ position: "absolute", top: "10px", left: "20px", zIndex: 10 }}>AKTIF & TIDAK AKTIF ARMADA</h5>
                             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", height: "calc(100% - 30px)", margin: "0 auto", position: "absolute", top: "30px" }}>
                                 <Pie data={data} options={options} />
                             </div>
