@@ -35,6 +35,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         if (detailId) {
             fetchArmada();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, detailId, navigate]);
 
     const fetchJenisKendaraan = async () => {
