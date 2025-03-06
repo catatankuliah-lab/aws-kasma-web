@@ -124,9 +124,9 @@
         }]
     },
     {
-        "header": "Inventaris",
+        "header": "Armada",
         "items": [{
-            "text": "Inventaris",
+            "text": "Armada",
             "icon": "bx bx-file",
             "available": true,
             "link": "/1/dev",
@@ -151,6 +151,33 @@
             "available": true,
             "link": "/8/keuangan",
             "roles": ["8"]
+        },
+        {
+            "text": "Riwayat Cicilan",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/8/riwayatcicilan",
+            "roles": ["8"]
+        }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/13/dashboard",
+            "roles": ["13"]
+        }]
+    },
+    {
+        "header": "PO",
+        "items": [{
+            "text": "PO",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/13/po",
+            "roles": ["13"]
         }]
     }
 ]

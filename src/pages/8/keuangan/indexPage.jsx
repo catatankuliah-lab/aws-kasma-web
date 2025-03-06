@@ -35,12 +35,12 @@ const IndexPage = () => {
             sortable: false,
             width: "50px",
         },
-        {
-            name: "Jenis kendaraan",
-            selector: (row) => row.nama_jenis_kendaraan,
-            sortable: true,
-            width: "200px",
-        },
+        // {
+        //     name: "Jenis kendaraan",
+        //     selector: (row) => row.nama_jenis_kendaraan,
+        //     sortable: true,
+        //     width: "200px",
+        // },
         {
             name: "NOPOL",
             selector: (row) => row.nopol_armada,
@@ -148,7 +148,7 @@ const IndexPage = () => {
             {currentView === "index" && (
                 <>
                     <div className="row">
-                        <div className="col-lg-12">
+                        {/* <div className="col-lg-12">
                             <div className="mb-3">
                                 <div className="divider text-start fw-bold">
                                     <div className="divider-text">
@@ -168,7 +168,7 @@ const IndexPage = () => {
                                 </button>{" "}
                                 untuk menambahkan Armada.
                             </div>
-                        </div>
+                        </div> */}
                         {/* Input pencarian */}
                         <div className="col-lg-12 mb-3">
                             <input
