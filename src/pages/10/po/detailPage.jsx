@@ -283,7 +283,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         dataKasjaRegulertoSubmit.append("tonase", formDataReguler.tonase);
         dataKasjaRegulertoSubmit.append("status_kas_jalan", "DIBUAT");
         try {
-            const response = await axios.put(
+            await axios.put(
                 `https://apikasma.delapandelapanlogistics.com/api/v1/kasjalan/${formDataReguler.id_kas_jalan}`,
                 dataKasjaRegulertoSubmit,
                 {

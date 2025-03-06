@@ -3,13 +3,14 @@ import axios from "axios";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 const DetailPage = ({ detailId, handleBackClick }) => {
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
 
     const [jeniskendaraanOption, setJenisKendaraanOption] = useState([]);
-    const [statusArmadaOption, setStatusArmadaOption] = useState([
+    const [statusArmadaOption] = useState([
         { value: "TERSEDIA", label: "TERSEDIA" },
         { value: "MUAT", label: "MUAT" },
         { value: "BONGKAR", label: "BONGKAR" },
@@ -256,5 +257,11 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         </div>
     );
 };
+
+DetailPage.propTypes = {
+    detailId: PropTypes.number.isRequired,
+    handleBackClick: PropTypes.func.isRequired
+};
+
 
 export default DetailPage;

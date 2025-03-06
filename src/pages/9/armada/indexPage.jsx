@@ -127,8 +127,6 @@ const IndexPage = () => {
         setCurrentPage(page);
     };
 
-    const handleAddClick = () => setCurrentView("add");
-
     const handleDetailClick = (row) => {
         if (row.id_armada !== null) {
             setDetailId(row.id_armada);
