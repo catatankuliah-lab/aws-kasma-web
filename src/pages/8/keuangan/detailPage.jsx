@@ -3,11 +3,12 @@ import axios from "axios";
 import Select from "react-select";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 const DetailPage = ({ detailId, handleBackClick }) => {
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
-    const [angsuranCicilanOption, setangsuranCicilanOption] = useState([
+    const [angsuranCicilanOption] = useState([
         { value: "1", label: "1" },
         { value: "2", label: "2" },
         { value: "3", label: "3" },
@@ -57,10 +58,10 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         { value: "47", label: "47" },
         { value: "48", label: "48" },
     ]);
-    const [selectedAngsuranCicilan, setSelectedAngsuranCicilan] = useState(null);
+    const [setSelectedAngsuranCicilan] = useState(null);
     const [cicilan, setCicilan] = useState([]);
     const [jeniskendaraanOption, setJenisKendaraanOption] = useState([]);
-    const [statusArmadaOption, setStatusArmadaOption] = useState([
+    const [statusArmadaOption] = useState([
         { value: "TERSEDIA", label: "TERSEDIA" },
         { value: "MUAT", label: "MUAT" },
         { value: "BONGKAR", label: "BONGKAR" },
@@ -78,7 +79,6 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         file_angsuran: "",
     });
 
-    // Ambil data Jenis Kendaraan
     useEffect(() => {
         if (!token) {
             navigate("/");
@@ -88,7 +88,9 @@ const DetailPage = ({ detailId, handleBackClick }) => {
             fetchArmada();
             fetchRiwayatCicilan();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, detailId, navigate]);
+
 
     const fetchRiwayatCicilan = async () => {
         if (!token) {
@@ -197,7 +199,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
         datatoSubmit.append("file_angsuran", "bukti.jpg");
         console.log(Object.fromEntries(datatoSubmit.entries()));
         try {
-            const response = await axios.post(`https://apikasma.delapandelapanlogistics.com/api/v1/cicilan`, datatoSubmit, {
+            await axios.post(`https://apikasma.delapandelapanlogistics.com/api/v1/cicilan`, datatoSubmit, {
                 headers: {
                     Authorization: token,
                     "Content-Type": "multipart/form-data",
@@ -218,45 +220,6 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                 title: 'Error',
                 text: 'Gagal menambahkan data. Silakan coba lagi.',
                 icon: 'error',
-                showConfirmButton: true,
-            });
-        }
-    };
-
-    const handleUpdate = async (event) => {
-        event.preventDefault();
-        console.log("Detail ID:", detailId);
-        console.log("Data Armada:", formData);
-
-        const dataArmadaToSubmit = new FormData();
-        dataArmadaToSubmit.append("id_jenis_kendaraan", formData.id_jenis_kendaraan);
-        dataArmadaToSubmit.append("nopol_armada", formData.nopol_armada);
-        dataArmadaToSubmit.append("lokasi_terakhir", formData.lokasi_terakhir);
-        dataArmadaToSubmit.append("status_armada", formData.status_armada);
-
-        try {
-            await axios.put(`https://apikasma.delapandelapanlogistics.com/api/v1/armada/${detailId}`, dataArmadaToSubmit, {
-                headers: {
-                    Authorization: token,
-                    "Content-Type": "multipart/form-data",
-                },
-            });
-
-            Swal.fire({
-                title: "Data Armada",
-                text: "Data Berhasil Diperbaharui",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 2000,
-            }).then(() => {
-                handleBackClick();
-            });
-        } catch (error) {
-            console.error("Error submitting data:", error);
-            Swal.fire({
-                title: "Error",
-                text: "Gagal menambahkan data. Silakan coba lagi.",
-                icon: "error",
                 showConfirmButton: true,
             });
         }
@@ -479,9 +442,9 @@ const DetailPage = ({ detailId, handleBackClick }) => {
                                                         <td>{item.angsuran}</td>
                                                         <td>{item.tanggal_angsuran}</td>
                                                         <td>{item.besaran_angsuran}</td>
-                                                        <td> <button onClick={() => handleDetailClick()} className="btn btn-link">
+                                                        {/* <td> <button onClick={() => handleDetailClick()} className="btn btn-link">
                                                             <i className="bx bx-zoom-in text-priamry"></i>
-                                                        </button></td>
+                                                        </button></td> */}
                                                     </tr>
                                                 ))
                                             ) : (
@@ -499,6 +462,14 @@ const DetailPage = ({ detailId, handleBackClick }) => {
             </div>
         </div>
     );
+};
+
+DetailPage.propTypes = {
+    detailId: PropTypes.number.isRequired,
+    idCustomerInit: PropTypes.number.isRequired,
+    idArmadaInit: PropTypes.number.isRequired,
+    idDriverInit: PropTypes.number.isRequired,
+    handleBackClick: PropTypes.func.isRequired
 };
 
 export default DetailPage;

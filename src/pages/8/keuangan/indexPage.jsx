@@ -35,12 +35,6 @@ const IndexPage = () => {
             sortable: false,
             width: "50px",
         },
-        // {
-        //     name: "Jenis kendaraan",
-        //     selector: (row) => row.nama_jenis_kendaraan,
-        //     sortable: true,
-        //     width: "200px",
-        // },
         {
             name: "NOPOL",
             selector: (row) => row.nopol_armada,
@@ -120,8 +114,6 @@ const IndexPage = () => {
         setCurrentPage(page);
     };
 
-    const handleAddClick = () => setCurrentView("add");
-
     const handleDetailClick = (row) => {
         if (row.id_armada !== null) {
             setDetailId(row.id_armada);
@@ -148,27 +140,6 @@ const IndexPage = () => {
             {currentView === "index" && (
                 <>
                     <div className="row">
-                        {/* <div className="col-lg-12">
-                            <div className="mb-3">
-                                <div className="divider text-start fw-bold">
-                                    <div className="divider-text">
-                                        <span className="menu-header-text fs-6">Data Armada</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-12 mb-3">
-                            <div className="">
-                                Klik{" "}
-                                <button
-                                    className="fw-bold btn btn-link p-0"
-                                    onClick={() => handleAddClick()}
-                                >
-                                    disini
-                                </button>{" "}
-                                untuk menambahkan Armada.
-                            </div>
-                        </div> */}
                         {/* Input pencarian */}
                         <div className="col-lg-12 mb-3">
                             <input
@@ -198,12 +169,6 @@ const IndexPage = () => {
                         </div>
                     </div>
                 </>
-            )}
-            {currentView === "add" && (
-                <AddPage
-                    handlePageChanges={handlePageChanges}
-                    handleBackClick={handleBackClick}
-                />
             )}
             {currentView === "detail" && (
                 <DetailPage
