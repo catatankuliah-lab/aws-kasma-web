@@ -3,10 +3,21 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import Swal from "sweetalert2";
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, handleBackClick }) => {
     const token = localStorage.getItem('token');
+
+    const modules = {
+        toolbar: [
+            [{ color: [] }, { background: [] }],
+        ],
+    };
+
+    const formats = [
+        "color"
+    ];
 
     const [formData, setFormData] = useState({
         nomor_po: "",
@@ -46,6 +57,10 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         tonase: "",
         rasio_perkalian: "",
         rasio_perkalian_kosong: ""
+    });
+
+    const [formDataTitikBongkar, setFormDataTitikBongkar] = useState({
+        titik_bongkar: ""
     });
 
     const [po, setPO] = useState(null);
@@ -259,6 +274,13 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         }));
     };
 
+    const handleChangeQuillReguler = (value) => {
+        setFormDataReguler((prevData) => ({
+            ...prevData,
+            keterangan_rute: value,
+        }));
+    };
+
     const handleChangeKosongan = (e) => {
         const { name, value } = e.target;
         setFormDataKosongan((prevData) => ({
@@ -267,11 +289,24 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         }));
     };
 
+    const handleChangeQuillKosongan = (value) => {
+        setFormDataKosongan((prevData) => ({
+            ...prevData,
+            keterangan_rute: value,
+        }));
+    };
+
+    const handleChangeQuillTitikBongkar = (value) => {
+        setFormDataTitikBongkar((prevData) => ({
+            ...prevData,
+            titik_bongkar: value,
+        }));
+    };
+
     const handleUpdateReguler = async (event) => {
         event.preventDefault();
-
-        // Buat objek FormData dengan benar
         const dataKasjaRegulertoSubmit = new FormData();
+        const dataPOtoSubmit = new FormData();
         dataKasjaRegulertoSubmit.append("id_po", detailId);
         dataKasjaRegulertoSubmit.append("jenis_kas_jalan", "REGULER");
         dataKasjaRegulertoSubmit.append("jarak_isi", formDataReguler.jarak_isi);
@@ -282,6 +317,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         dataKasjaRegulertoSubmit.append("keterangan_rute", formDataReguler.keterangan_rute);
         dataKasjaRegulertoSubmit.append("tonase", formDataReguler.tonase);
         dataKasjaRegulertoSubmit.append("status_kas_jalan", "DIBUAT");
+        dataPOtoSubmit.append("status_po", "PROSES KEUANGAN");
         try {
             await axios.put(
                 `http://localhost:3090/api/v1/kasjalan/${formDataReguler.id_kas_jalan}`,
@@ -293,7 +329,16 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                     },
                 }
             );
-
+            await axios.put(
+                `http://localhost:3090/api/v1/po/status/${detailId}`,
+                dataPOtoSubmit,
+                {
+                    headers: {
+                        Authorization: token,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
             Swal.fire({
                 title: "Data Reguler",
                 text: "Data Berhasil Diperbaharui",
@@ -303,7 +348,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
             }).then(() => {
                 handleBackClick();
             });
-
         } catch (error) {
             console.error("Error submitting data:", error);
             Swal.fire({
@@ -315,10 +359,10 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         }
     };
 
-
     const handleUpdateKosongan = async (event) => {
         event.preventDefault();
         const dataKasjaKosongantoSubmit = new FormData();
+        const dataPOtoSubmit = new FormData();
         dataKasjaKosongantoSubmit.append("id_po", detailId);
         dataKasjaKosongantoSubmit.append("jenis_kas_jalan", "KOSONGAN");
         dataKasjaKosongantoSubmit.append("jarak_isi", formDataKosongan.jarak_isi);
@@ -329,9 +373,10 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         dataKasjaKosongantoSubmit.append("keterangan_rute", formDataKosongan.keterangan_rute);
         dataKasjaKosongantoSubmit.append("tonase", formDataKosongan.tonase);
         dataKasjaKosongantoSubmit.append("status_kas_jalan", "DIBUAT");
+        dataPOtoSubmit.append("status_po", "PROSES KEUANGAN");
         console.log([...dataKasjaKosongantoSubmit.entries()]);
         try {
-            const response = await axios.put(
+            await axios.put(
                 `http://localhost:3090/api/v1/kasjalan/${formDataKosongan.id_kas_jalan}`,
                 dataKasjaKosongantoSubmit,
                 {
@@ -341,9 +386,16 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                     },
                 }
             );
-
-            console.log("Response:", response.data); // 🔍 Log response dari API
-
+            await axios.put(
+                `http://localhost:3090/api/v1/po/status/${detailId}`,
+                dataPOtoSubmit,
+                {
+                    headers: {
+                        Authorization: token,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
             Swal.fire({
                 title: "Data Kosongan",
                 text: "Data Berhasil Diperbaharui",
@@ -353,7 +405,41 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
             }).then(() => {
                 handleBackClick();
             });
+        } catch (error) {
+            console.error("Error submitting data:", error);
+            Swal.fire({
+                title: "Error",
+                text: "Gagal memperbarui data. Silakan coba lagi.",
+                icon: "error",
+                showConfirmButton: true,
+            });
+        }
+    };
 
+    const handleUpdateTitikBongkar = async (event) => {
+        event.preventDefault();
+        const dataPOtoSubmit = new FormData();
+        dataPOtoSubmit.append("titik_bongkar", formDataTitikBongkar.titik_bongkar);
+        try {
+            await axios.put(
+                `http://localhost:3090/api/v1/po/titikbongkar/${detailId}`,
+                dataPOtoSubmit,
+                {
+                    headers: {
+                        Authorization: token,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+            Swal.fire({
+                title: "Data Titik Bongkar",
+                text: "Data Berhasil Diperbaharui",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000,
+            }).then(() => {
+                handleBackClick();
+            });
         } catch (error) {
             console.error("Error submitting data:", error);
             Swal.fire({
@@ -479,8 +565,9 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                         </div>
                     </div>
+                    </div>
                     {formDataReguler && (
-                        <div className="row">
+                        <div className='row' >
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="jarak_isi" className="form-label">Jarak Isi (KM)</label>
                                 <input
@@ -500,7 +587,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                                     required
                                 />
                             </div>
-
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="solar_isi" className="form-label">Solar Isi</label>
                                 <input className="form-control" type="text" id="solar_isi" name="solar_isi" placeholder="Rp.0,00" onChange={handleChangeReguler} required readOnly value={formatRupiah(formDataReguler.jarak_isi * ((parseFloat(formDataReguler.rasio_perkalian)) + (70 * parseFloat(formDataReguler.tonase) / 1000)))} />
@@ -524,7 +610,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                                     required
                                 />
                             </div>
-
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="solar_kosong" className="form-label">Solar Kosong</label>
                                 <input className="form-control" type="text" id="solar_kosong" name="solar_kosong" placeholder="Rp.0,00" onChange={handleChangeReguler} required readOnly value={formatRupiah(parseFloat(formDataReguler.jarak_kosong) * (parseFloat(formDataReguler.rasio_perkalian_kosong)))} />
@@ -547,7 +632,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="tonase" className="form-label">Tonase (Kg)</label>
-                                <input className="form-control" type="text" id="tonase" name="tonase" placeholder="0" onChange={handleChangeReguler} required value={parseInt(formDataReguler.tonase).toLocaleString('id-ID')} />
+                                <input className="form-control" type="text" id="tonase" name="tonase" placeholder="0" onChange={handleChangeReguler} required value={(formDataReguler.tonase ? parseInt(formDataReguler.tonase) : 0).toLocaleString('id-ID')} />
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="kas_jalan" className="form-label">Kas Jalan</label>
@@ -555,7 +640,13 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                             <div className="col-md-12 col-sm-12 mb-3">
                                 <label htmlFor="keterangan_rute" className="form-label">Keterangan Rute</label>
-                                <textarea rows={5} className="form-control" id="keterangan_rute" name="keterangan_rute" placeholder="Masukkan keterangan rute" onChange={handleChangeReguler} required value={formDataReguler.keterangan_rute}></textarea>
+                                <ReactQuill
+                                    theme="snow"
+                                    value={formDataReguler.keterangan_rute}
+                                    onChange={handleChangeQuillReguler}
+                                    modules={modules}
+                                    formats={formats}
+                                />
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="" className="form-label">
@@ -571,11 +662,13 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                         </div>
                     )}
-                    <div className="col-lg-12">
-                        <div className="mb-3">
-                            <div className="divider text-start">
-                                <div className="divider-text">
-                                    <span className="menu-header-text fs-6">Informasi Kas Jalan Kosongan (To Garasi)</span>
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <div className="mb-3">
+                                <div className="divider text-start">
+                                    <div className="divider-text">
+                                        <span className="menu-header-text fs-6">Informasi Kas Jalan Kosongan (To Garasi)</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -625,7 +718,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                                     required
                                 />
                             </div>
-
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="solar_kosong" className="form-label">Solar Kosong</label>
                                 <input className="form-control" type="text" id="solar_kosong" name="solar_kosong" placeholder="Rp.0,00" onChange={handleChangeKosongan} required readOnly value={formatRupiah(parseFloat(formDataKosongan.jarak_kosong) * (parseFloat(formDataKosongan.rasio_perkalian_kosong)))} />
@@ -671,7 +763,13 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                             <div className="col-md-12 col-sm-12 mb-3">
                                 <label htmlFor="keterangan_rute" className="form-label">Keterangan Rute</label>
-                                <textarea rows={5} className="form-control" id="keterangan_rute" name="keterangan_rute" placeholder="Masukkan keterangan rute" onChange={handleChangeKosongan} required value={formDataKosongan.keterangan_rute}></textarea>
+                                <ReactQuill
+                                    theme="snow"
+                                    value={formDataKosongan.keterangan_rute}
+                                    onChange={handleChangeQuillKosongan}
+                                    modules={modules}
+                                    formats={formats}
+                                />
                             </div>
                             <div className="col-md-3 col-sm-12 mb-3">
                                 <label htmlFor="" className="form-label">
@@ -696,9 +794,29 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                         </div>
                     </div>
+                    <div className="col-md-12 col-sm-12 mb-3">
+                        <ReactQuill
+                            theme="snow"
+                            value={formDataKosongan.keterangan_rute}
+                            onChange={handleChangeQuillTitikBongkar}
+                            modules={modules}
+                            formats={formats}
+                        />
+                    </div>
+                    <div className="col-md-3 col-sm-12 mb-3">
+                        <label htmlFor="" className="form-label">
+                            Proses
+                        </label>
+                        <button
+                            type="button"
+                            onClick={handleUpdateTitikBongkar}
+                            className="btn btn-primary w-100"
+                        >
+                            SIMPAN PERUBAHAN
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
     );
 };
 

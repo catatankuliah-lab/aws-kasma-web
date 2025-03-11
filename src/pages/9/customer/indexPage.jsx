@@ -36,7 +36,7 @@ const IndexPage = () => {
             name: "Nama Customer",
             selector: (row) => row.nama_customer,
             sortable: true,
-            width: "200px",
+            width: "400px",
         },
         {
             name: "Alamat Customer",
