@@ -8,6 +8,12 @@ import Swal from "sweetalert2";
 const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, handleBackClick }) => {
     const token = localStorage.getItem('token');
 
+    const [JenisMuatanOption, setJenisMuatanOption] = useState([
+        { value: "BASAH", label: "BASAH" },
+        { value: "KERING", label: "KERING" },
+    ]);
+    const [titikBongkar, setTitikBongkar] = useState([]);
+
     const [formData, setFormData] = useState({
         nomor_po: "",
         tanggal_po: "",
@@ -17,7 +23,9 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         id_armada: "",
         id_driver: "",
         destination: "",
-        status_po: ""
+        status_po: "",
+        origin: "",
+        jenis_muatan: ""
     });
 
     const [formDataReguler, setFormDataReguler] = useState({
@@ -48,7 +56,35 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
 
     const [customerOption, setCustomerOption] = useState([]);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
-    const [origin, setOrigin] = useState("");
+    // const [origin, setOrigin] = useState("");
+    const fetchTitikBongkar = async () => {
+        if (!token) {
+            navigate('/');
+        }
+        try {
+            const response = await axios.get(`http://localhost:3090/api/v1/titikbongkar/po/${detailId}`, {
+                headers: {
+                    Authorization: token
+                }
+            });
+            console.log(response.data.data[0]);
+            if (response.data.data.length !== 0) {
+                const datafetch = response.data.data.map(dataitem => ({
+                    alamat_titik_bongkar: dataitem.alamat_titik_bongkar,
+                    shareloc: dataitem.shareloc,
+                    nama_penerima: dataitem.nama_penerima,
+                    nomor_penerima: dataitem.nomor_penerima
+                }));
+                setTitikBongkar(datafetch);
+                console.log(datafetch);
+            } else {
+                setTitikBongkar([]);
+            }
+        } catch (error) {
+            console.log(error);
+            setTitikBongkar([]);
+        }
+    };
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
@@ -79,7 +115,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         if (customerOption.length > 0 && idCustomerInit) {
             const initialValue = customerOption.find(option => option.value === idCustomerInit) || null;
             setSelectedCustomer(initialValue);
-            setOrigin(initialValue.alamat);
+            // setOrigin(initialValue.alamat);
         }
     }, [customerOption, idCustomerInit]);
 
@@ -91,7 +127,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
             id_customer: selectedOption.value // Pastikan id_customer diperbarui
         }));
     };
-    
+
 
     const [armadaOption, setArmadaOption] = useState([]);
     const [selectedArmada, setSelectedArmada] = useState(null);
@@ -132,7 +168,13 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
             id_armada: selectedOption.value // Menyimpan ID Armada ke dalam formData
         }));
     };
-    
+
+    const handleJenisMuatanChange = (selectedOption) => {
+        setFormData({
+            ...formData,
+            jenis_muatan: selectedOption ? selectedOption.value : "",
+        });
+    };
 
     const [driverOption, setDriverOption] = useState([]);
     const [selectedDriver, setSelectedDriver] = useState(null);
@@ -173,7 +215,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
             id_driver: selectedOption.value // Menyimpan ID Driver ke dalam formData
         }));
     };
-    
+
 
     useEffect(() => {
         const fetchPO = async () => {
@@ -193,6 +235,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         };
         if (detailId) {
             fetchPO();
+            fetchTitikBongkar();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [detailId]);
@@ -212,6 +255,8 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                 id_driver: po.id_driver || prevData.id_driver,
                 destination: po.destination || prevData.destination,
                 status_po: po.status_po || prevData.status_po,
+                origin: po.origin || prevData.origin,
+                jenis_muatan: po.jenis_muatan || prevData.jenis_muatan,
             }));
             if (po.kas_jalan.REGULER) {
                 setFormDataReguler(() => ({
@@ -289,6 +334,8 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         dataPOtoSubmit.append("id_driver", formData.id_driver);
         dataPOtoSubmit.append("destination", formData.destination);
         dataPOtoSubmit.append('status_po', formData.status_po);
+        dataPOtoSubmit.append('origin', formData.origin);
+        dataPOtoSubmit.append('jenis_muatan', formData.jenis_muatan);
 
         try {
             await axios.put(`http://localhost:3090/api/v1/po/${detailId}`, dataPOtoSubmit, {
@@ -332,7 +379,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                 <div className="mb-3">
                     <div className="divider text-start fw-bold">
                         <div className="divider-text">
-                            <span className="menu-header-text fs-6">Detail Driver</span>
+                            <span className="menu-header-text fs-6">Detail Purchase Order</span>
                         </div>
                     </div>
                 </div>
@@ -346,7 +393,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                     >
                         disini
                     </button>{" "}
-                    untuk kembali ke menu utama Driver.
+                    untuk kembali ke menu utama Purchase Order.
                 </div>
             </div>
             <div className="col-md-12 mt-3">
@@ -392,8 +439,8 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                         />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="telpon_kontak_darurat_driver" className="form-label">Origin</label>
-                        <input className="form-control text-uppercase" type="text" readOnly value={origin} />
+                        <label htmlFor="origin" className="form-label">Origin</label>
+                        <input className="form-control text-uppercase" type="text" id="origin" name='origin' placeholder="" onChange={handleChange} value={formData.origin || ""} />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="destination" className="form-label">Destination</label>
@@ -424,7 +471,21 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                         />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3 d-none">
-                        <input className="form-control" type="text" id="status_po" name='status_po' placeholder="" onChange={handleChange} value={formData.status_po || ""} required hidden/>
+                        <input className="form-control" type="text" id="status_po" name='status_po' placeholder="" onChange={handleChange} value={formData.status_po || ""} required hidden />
+                    </div>
+                    <div className="col-md-3 col-sm-12 mb-3">
+                        <label htmlFor="jenis_muatan" className="form-label">
+                            Jenis Muatan
+                        </label>
+                        <Select
+                            id="jenis_muatan"
+                            name="jenis_muatan"
+                            value={JenisMuatanOption.find(option => option.value === formData.jenis_muatan) || null}
+                            onChange={handleJenisMuatanChange}
+                            options={JenisMuatanOption}
+                            placeholder="Pilih Jenis Muatan"
+                            required
+                        />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="" className="form-label">
@@ -448,49 +509,49 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                         </div>
                     </div>
                     {formDataReguler && (
-                            <div className="row">
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="jarak_isi" className="form-label">Jarak Isi (KM)</label>
-                                    <input className="form-control" type="text" id="jarak_isi" name="jarak_isi" placeholder="88LOG-PO0000-000" onChange={handleChange} required readOnly value={formDataReguler.jarak_isi.toLocaleString('id-ID') || "0"} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="solar_isi" className="form-label">Solar Isi</label>
-                                    <input className="form-control" type="text" id="solar_isi" name="solar_isi" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(formDataReguler.jarak_isi * ((parseFloat(formDataReguler.rasio_perkalian)) + (70 * parseFloat(formDataReguler.tonase) / 1000)))} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="jarak_kosong" className="form-label">Jarak Kosong (KM)</label>
-                                    <input className="form-control" type="text" id="jarak_kosong" name="jarak_kosong" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.jarak_kosong.toLocaleString('id-ID') || "0"} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="solar_kosong" className="form-label">Solar Kosong</label>
-                                    <input className="form-control" type="text" id="solar_kosong" name="solar_kosong" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(parseFloat(formDataReguler.jarak_kosong) * (parseFloat(formDataReguler.rasio_perkalian_kosong)))} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="jam_tunggu" className="form-label">Jam Tunggu (Jam)</label>
-                                    <input className="form-control" type="text" id="jam_tunggu" name="jam_tunggu" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.jam_tunggu || "0"} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="solar_tunggu" className="form-label">Solar Tunggu</label>
-                                    <input className="form-control" type="text" id="solar_tunggu" name="solar_tunggu" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(parseInt(formDataReguler.jam_tunggu) * 11000)} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="gaji_driver" className="form-label">Gaji Driver</label>
-                                    <input className="form-control" type="text" id="gaji_driver" name="gaji_driver" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah(formDataReguler.gaji_driver) || formatRupiah(0)} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="e_toll" className="form-label">E-Toll</label>
-                                    <input className="form-control" type="text" id="e_toll" name="e_toll" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah(formDataReguler.e_toll) || formatRupiah(0)} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="tonase" className="form-label">Tonase (Kg)</label>
-                                    <input className="form-control" type="text" id="tonase" name="tonase" placeholder="0" onChange={handleChange} required readOnly value={parseInt(formDataReguler.tonase).toLocaleString('id-ID') || "0"} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="kas_jalan" className="form-label">Kas Jalan</label>
-                                    <input className="form-control" type="text" id="kas_jalan" name="kas_jalan" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah((parseInt(formDataReguler.jam_tunggu) * 11000) + (formDataReguler.jarak_isi * ((parseFloat(formDataReguler.rasio_perkalian)) + (70 * parseFloat(formDataReguler.tonase) / 1000))) + (parseFloat(formDataReguler.jarak_kosong) * (parseFloat(formDataReguler.rasio_perkalian_kosong))) + (parseFloat(formDataReguler.gaji_driver)) + (parseFloat(formDataReguler.e_toll)))} />
-                                </div>
+                        <div className="row">
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="jarak_isi" className="form-label">Jarak Isi (KM)</label>
+                                <input className="form-control" type="text" id="jarak_isi" name="jarak_isi" placeholder="88LOG-PO0000-000" onChange={handleChange} required readOnly value={formDataReguler.jarak_isi.toLocaleString('id-ID') || "0"} />
                             </div>
-                        )}
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="solar_isi" className="form-label">Solar Isi</label>
+                                <input className="form-control" type="text" id="solar_isi" name="solar_isi" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(formDataReguler.jarak_isi * ((parseFloat(formDataReguler.rasio_perkalian)) + (70 * parseFloat(formDataReguler.tonase) / 1000)))} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="jarak_kosong" className="form-label">Jarak Kosong (KM)</label>
+                                <input className="form-control" type="text" id="jarak_kosong" name="jarak_kosong" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.jarak_kosong.toLocaleString('id-ID') || "0"} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="solar_kosong" className="form-label">Solar Kosong</label>
+                                <input className="form-control" type="text" id="solar_kosong" name="solar_kosong" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(parseFloat(formDataReguler.jarak_kosong) * (parseFloat(formDataReguler.rasio_perkalian_kosong)))} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="jam_tunggu" className="form-label">Jam Tunggu (Jam)</label>
+                                <input className="form-control" type="text" id="jam_tunggu" name="jam_tunggu" placeholder="0" onChange={handleChange} required readOnly value={formDataReguler.jam_tunggu || "0"} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="solar_tunggu" className="form-label">Solar Tunggu</label>
+                                <input className="form-control" type="text" id="solar_tunggu" name="solar_tunggu" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(parseInt(formDataReguler.jam_tunggu) * 11000)} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="gaji_driver" className="form-label">Gaji Driver</label>
+                                <input className="form-control" type="text" id="gaji_driver" name="gaji_driver" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah(formDataReguler.gaji_driver) || formatRupiah(0)} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="e_toll" className="form-label">E-Toll</label>
+                                <input className="form-control" type="text" id="e_toll" name="e_toll" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah(formDataReguler.e_toll) || formatRupiah(0)} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="tonase" className="form-label">Tonase (Kg)</label>
+                                <input className="form-control" type="text" id="tonase" name="tonase" placeholder="0" onChange={handleChange} required readOnly value={parseInt(formDataReguler.tonase).toLocaleString('id-ID') || "0"} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="kas_jalan" className="form-label">Kas Jalan</label>
+                                <input className="form-control" type="text" id="kas_jalan" name="kas_jalan" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah((parseInt(formDataReguler.jam_tunggu) * 11000) + (formDataReguler.jarak_isi * ((parseFloat(formDataReguler.rasio_perkalian)) + (70 * parseFloat(formDataReguler.tonase) / 1000))) + (parseFloat(formDataReguler.jarak_kosong) * (parseFloat(formDataReguler.rasio_perkalian_kosong))) + (parseFloat(formDataReguler.gaji_driver)) + (parseFloat(formDataReguler.e_toll)))} />
+                            </div>
+                        </div>
+                    )}
                     <div className="col-lg-12">
                         <div className="mb-3">
                             <div className="divider text-start">
@@ -501,49 +562,49 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                         </div>
                     </div>
                     {formDataKosongan && (
-                            <div className="row">
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="jarak_isi" className="form-label">Jarak Isi (KM)</label>
-                                    <input className="form-control" type="text" id="jarak_isi" name="jarak_isi" placeholder="88LOG-PO0000-000" onChange={handleChange} required readOnly value={formDataKosongan.jarak_isi.toLocaleString('id-ID') || "0"} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="solar_isi" className="form-label">Solar Isi</label>
-                                    <input className="form-control" type="text" id="solar_isi" name="solar_isi" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(formDataKosongan.jarak_isi * ((parseFloat(formDataKosongan.rasio_perkalian)) + (70 * parseFloat(formDataKosongan.tonase) / 1000)))} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="jarak_kosong" className="form-label">Jarak Kosong (KM)</label>
-                                    <input className="form-control" type="text" id="jarak_kosong" name="jarak_kosong" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.jarak_kosong.toLocaleString('id-ID') || "0"} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="solar_kosong" className="form-label">Solar Kosong</label>
-                                    <input className="form-control" type="text" id="solar_kosong" name="solar_kosong" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(parseFloat(formDataKosongan.jarak_kosong) * (parseFloat(formDataKosongan.rasio_perkalian_kosong)))} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="jam_tunggu" className="form-label">Jam Tunggu (Jam)</label>
-                                    <input className="form-control" type="text" id="jam_tunggu" name="jam_tunggu" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.jam_tunggu || "0"} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="solar_tunggu" className="form-label">Solar Tunggu</label>
-                                    <input className="form-control" type="text" id="solar_tunggu" name="solar_tunggu" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(parseInt(formDataKosongan.jam_tunggu) * 11000)} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="gaji_driver" className="form-label">Gaji Driver</label>
-                                    <input className="form-control" type="text" id="gaji_driver" name="gaji_driver" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah(formDataKosongan.gaji_driver) || formatRupiah(0)} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="e_toll" className="form-label">E-Toll</label>
-                                    <input className="form-control" type="text" id="e_toll" name="e_toll" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah(formDataKosongan.e_toll) || formatRupiah(0)} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="tonase" className="form-label">Tonase (Kg)</label>
-                                    <input className="form-control" type="text" id="tonase" name="tonase" placeholder="0" onChange={handleChange} required readOnly value={parseInt(formDataKosongan.tonase).toLocaleString('id-ID') || "0"} />
-                                </div>
-                                <div className="col-md-3 col-sm-12 mb-3">
-                                    <label htmlFor="kas_jalan" className="form-label">Kas Jalan</label>
-                                    <input className="form-control" type="text" id="kas_jalan" name="kas_jalan" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah((parseInt(formDataKosongan.jam_tunggu) * 11000) + (formDataKosongan.jarak_isi * ((parseFloat(formDataKosongan.rasio_perkalian)) + (70 * parseFloat(formDataKosongan.tonase) / 1000))) + (parseFloat(formDataKosongan.jarak_kosong) * (parseFloat(formDataKosongan.rasio_perkalian_kosong))) + (parseFloat(formDataKosongan.gaji_driver)) + (parseFloat(formDataKosongan.e_toll)))} />
-                                </div>
+                        <div className="row">
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="jarak_isi" className="form-label">Jarak Isi (KM)</label>
+                                <input className="form-control" type="text" id="jarak_isi" name="jarak_isi" placeholder="88LOG-PO0000-000" onChange={handleChange} required readOnly value={formDataKosongan.jarak_isi.toLocaleString('id-ID') || "0"} />
                             </div>
-                        )}
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="solar_isi" className="form-label">Solar Isi</label>
+                                <input className="form-control" type="text" id="solar_isi" name="solar_isi" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(formDataKosongan.jarak_isi * ((parseFloat(formDataKosongan.rasio_perkalian)) + (70 * parseFloat(formDataKosongan.tonase) / 1000)))} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="jarak_kosong" className="form-label">Jarak Kosong (KM)</label>
+                                <input className="form-control" type="text" id="jarak_kosong" name="jarak_kosong" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.jarak_kosong.toLocaleString('id-ID') || "0"} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="solar_kosong" className="form-label">Solar Kosong</label>
+                                <input className="form-control" type="text" id="solar_kosong" name="solar_kosong" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(parseFloat(formDataKosongan.jarak_kosong) * (parseFloat(formDataKosongan.rasio_perkalian_kosong)))} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="jam_tunggu" className="form-label">Jam Tunggu (Jam)</label>
+                                <input className="form-control" type="text" id="jam_tunggu" name="jam_tunggu" placeholder="0" onChange={handleChange} required readOnly value={formDataKosongan.jam_tunggu || "0"} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="solar_tunggu" className="form-label">Solar Tunggu</label>
+                                <input className="form-control" type="text" id="solar_tunggu" name="solar_tunggu" placeholder="Rp.0,00" onChange={handleChange} required readOnly value={formatRupiah(parseInt(formDataKosongan.jam_tunggu) * 11000)} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="gaji_driver" className="form-label">Gaji Driver</label>
+                                <input className="form-control" type="text" id="gaji_driver" name="gaji_driver" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah(formDataKosongan.gaji_driver) || formatRupiah(0)} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="e_toll" className="form-label">E-Toll</label>
+                                <input className="form-control" type="text" id="e_toll" name="e_toll" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah(formDataKosongan.e_toll) || formatRupiah(0)} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="tonase" className="form-label">Tonase (Kg)</label>
+                                <input className="form-control" type="text" id="tonase" name="tonase" placeholder="0" onChange={handleChange} required readOnly value={parseInt(formDataKosongan.tonase).toLocaleString('id-ID') || "0"} />
+                            </div>
+                            <div className="col-md-3 col-sm-12 mb-3">
+                                <label htmlFor="kas_jalan" className="form-label">Kas Jalan</label>
+                                <input className="form-control" type="text" id="kas_jalan" name="kas_jalan" placeholder="0" onChange={handleChange} required readOnly value={formatRupiah((parseInt(formDataKosongan.jam_tunggu) * 11000) + (formDataKosongan.jarak_isi * ((parseFloat(formDataKosongan.rasio_perkalian)) + (70 * parseFloat(formDataKosongan.tonase) / 1000))) + (parseFloat(formDataKosongan.jarak_kosong) * (parseFloat(formDataKosongan.rasio_perkalian_kosong))) + (parseFloat(formDataKosongan.gaji_driver)) + (parseFloat(formDataKosongan.e_toll)))} />
+                            </div>
+                        </div>
+                    )}
                     <div className="col-lg-12">
                         <div className="mb-3">
                             <div className="divider text-start">
@@ -551,6 +612,41 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                                     <span className="menu-header-text fs-6">Informasi Titik Bongkar</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div className="col-md-12 mb-4 mb-md-0">
+                        <div className="table-responsive text-nowrap">
+                            <table className="table" style={{ fontSize: "13px" }}>
+                                <thead>
+                                    <tr>
+                                        <th className='fw-bold' >No</th>
+                                        <th className='fw-bold'>Titik Bongkar</th>
+                                        <th className='fw-bold'>Shareloc</th>
+                                        <th className='fw-bold'>Nama Penerima</th>
+                                        <th className='fw-bold'>Nomor Penerima</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {titikBongkar.length > 0 ? (
+                                        titikBongkar.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>{item.alamat_titik_bongkar}</td>
+                                                <td>{item.shareloc}</td>
+                                                <td>{item.nama_penerima}</td>
+                                                <td>{item.nomor_penerima}</td>
+                                                {/* <td> <button onClick={() => handleDetailClick()} className="btn btn-link">
+                                                            <i className="bx bx-zoom-in text-priamry"></i>
+                                                        </button></td> */}
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="9" className="text-center">Data tidak tersedia</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

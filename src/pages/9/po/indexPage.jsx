@@ -70,7 +70,7 @@ const IndexPage = () => {
         },
         {
             name: "Origin to Destination",
-            selector: (row) => `${row.alamat_customer} to ${row.destination}`,
+            selector: (row) => `${row.origin} to ${row.destination}`,
             sortable: true,
             width: "200px",
         },

@@ -10,7 +10,10 @@ const AddPage = ({ handleBackClick }) => {
 
     const [origin, setOrigin] = useState("");
     const [nomorPO, setNomoerPO] = useState("");
-
+    const [JenisMuatanOption, setJenisMuatanOption] = useState([
+        { value: "BASAH", label: "BASAH" },
+        { value: "KERING", label: "KERING" },
+    ]);
     const [customerOption, setCustomerOption] = useState([]);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const handleCustomerChange = async (selectedOption) => {
@@ -38,9 +41,18 @@ const AddPage = ({ handleBackClick }) => {
         id_customer: "",
         id_armada: "",
         id_driver: "",
+        origin: "",
         destination: "",
+        jenis_muatan: "",
         status_po: "PROSES KAS JALAN"
     });
+    const handleJenisMuatanChange = (selectedOption) => {
+        setFormData({
+            ...formData,
+            jenis_muatan: selectedOption.value,
+        });
+    };
+
 
     const fetchCustomer = async () => {
         try {
@@ -187,15 +199,15 @@ const AddPage = ({ handleBackClick }) => {
                 const dataToSubmitKasJalan = {
                     ...formData,
                     id_po: hasil.data.data.id_po,
-                    jenis_kas_jalan:"REGULER",
-                    jarak_isi:"0",
-                    jarak_kosong:"0",
-                    jam_tunggu:"0",
-                    gaji_driver:"0",
-                    e_toll:"0",
-                    keterangan_rute:" ",
-                    tonase:"0",
-                    status_kas_jalan:"DIBUAT",
+                    jenis_kas_jalan: "REGULER",
+                    jarak_isi: "0",
+                    jarak_kosong: "0",
+                    jam_tunggu: "0",
+                    gaji_driver: "0",
+                    e_toll: "0",
+                    keterangan_rute: " ",
+                    tonase: "0",
+                    status_kas_jalan: "DIBUAT",
                 };
                 axios.post(
                     `http://localhost:3090/api/v1/kas_jalan`,
@@ -209,19 +221,43 @@ const AddPage = ({ handleBackClick }) => {
                 const dataToSubmitKasJalanKosongan = {
                     ...formData,
                     id_po: hasil.data.data.id_po,
-                    jenis_kas_jalan:"KOSONGAN",
-                    jarak_isi:"0",
-                    jarak_kosong:"0",
-                    jam_tunggu:"0",
-                    gaji_driver:"0",
-                    e_toll:"0",
-                    keterangan_rute:" ",
-                    tonase:"0",
-                    status_kas_jalan:"DIBUAT",
+                    jenis_kas_jalan: "KOSONGAN",
+                    jarak_isi: "0",
+                    jarak_kosong: "0",
+                    jam_tunggu: "0",
+                    gaji_driver: "0",
+                    e_toll: "0",
+                    keterangan_rute: " ",
+                    tonase: "0",
+                    status_kas_jalan: "DIBUAT",
                 };
                 axios.post(
                     `http://localhost:3090/api/v1/kas_jalan`,
                     dataToSubmitKasJalanKosongan,
+                    {
+                        headers: {
+                            Authorization: token,
+                        },
+                    }
+                );
+                const dataToSubmitStatusDriver = {
+                    status_driver: "TIDAK TERSEDIA",
+                };
+                axios.put(
+                    `http://localhost:3090/api/v1/driver/status/${selectedDriver.value}`,
+                    dataToSubmitStatusDriver,
+                    {
+                        headers: {
+                            Authorization: token,
+                        },
+                    }
+                );
+                const dataToSubmitStatusArmada = {
+                    status_armada: "MUAT",
+                };
+                axios.put(
+                    `http://localhost:3090/api/v1/armada/status/${selectedArmada.value}`,
+                    dataToSubmitStatusArmada,
                     {
                         headers: {
                             Authorization: token,
@@ -290,11 +326,11 @@ const AddPage = ({ handleBackClick }) => {
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
                             <label htmlFor="telpon_kontak_darurat_driver" className="form-label">Origin</label>
-                            <input className="form-control text-uppercase" type="text" readOnly value={origin} />
+                            <input className="form-control text-uppercase" type="text" id="origin" name='origin' placeholder="" onChange={handleChange} required />
                         </div>
                         <div className="col-md-3 col-sm-12 mb-3">
                             <label htmlFor="destination" className="form-label">Destination</label>
-                            <input className="form-control" type="text" id="destination" name='destination' placeholder="" onChange={handleChange} required />
+                            <input className="form-control text-uppercase" type="text" id="destination" name='destination' placeholder="" onChange={handleChange} required />
                         </div>
                         <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
                             <label htmlFor="id_armada" className="form-label">Armada</label>
@@ -317,6 +353,19 @@ const AddPage = ({ handleBackClick }) => {
                                 onChange={handleDriverChange}
                                 options={driverOption}
                                 placeholder="Pilih Driver"
+                                required
+                            />
+                        </div>
+                        <div className="col-md-3 col-sm-12 mb-3">
+                            <label htmlFor="jenis_muatan" className="form-label">
+                                Jenis Muatan
+                            </label>
+                            <Select
+                                id="jenis_muatan"
+                                name="jenis_muatan"
+                                options={JenisMuatanOption}
+                                onChange={handleJenisMuatanChange}
+                                placeholder="Pilih Jenis Muatan"
                                 required
                             />
                         </div>
