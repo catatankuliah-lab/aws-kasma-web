@@ -21,7 +21,11 @@ function App() {
     location.pathname.startsWith("/7") ||
     location.pathname.startsWith("/8") ||
     location.pathname.startsWith("/9") ||
-    location.pathname.startsWith("/10");
+    location.pathname.startsWith("/10") ||
+    location.pathname.startsWith("/11") ||
+    location.pathname.startsWith("/12") ||
+    location.pathname.startsWith("/13") ||
+    location.pathname.startsWith("/14");
 
   return (
     <>

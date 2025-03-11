@@ -1,9 +1,4 @@
-import { useEffect } from "react";
-
 export const DashboardPage = () => {
-    useEffect(() => {
-        dashboardAnalitics();
-    }, [])
     return (
         <>
             <div className="row">

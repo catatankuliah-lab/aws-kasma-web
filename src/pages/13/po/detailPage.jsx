@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
@@ -242,7 +243,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                     tonase: "0",
                     rasio_perkalian: "0",
                     rasio_perkalian_kosong: "0",
-                    keterangan_rute:""
+                    keterangan_rute: ""
                 }));
             }
             if (po.kas_jalan.KOSONGAN) {
