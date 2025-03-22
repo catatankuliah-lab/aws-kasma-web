@@ -9,7 +9,7 @@ const AddPage = ({ handleBackClick }) => {
     const token = localStorage.getItem('token');
 
     const [origin, setOrigin] = useState("");
-    const [nomorPO, setNomoerPO] = useState("");
+    const [ , setNomoerPO] = useState("");
     const [JenisMuatanOption, setJenisMuatanOption] = useState([
         { value: "BASAH", label: "BASAH" },
         { value: "KERING", label: "KERING" },

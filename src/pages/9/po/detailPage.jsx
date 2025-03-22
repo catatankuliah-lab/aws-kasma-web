@@ -336,6 +336,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         dataPOtoSubmit.append('status_po', formData.status_po);
         dataPOtoSubmit.append('origin', formData.origin);
         dataPOtoSubmit.append('jenis_muatan', formData.jenis_muatan);
+        console.log([...dataPOtoSubmit.entries()]);
 
         try {
             await axios.put(`http://localhost:3090/api/v1/po/${detailId}`, dataPOtoSubmit, {

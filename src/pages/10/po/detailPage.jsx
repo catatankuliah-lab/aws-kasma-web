@@ -491,7 +491,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         dataTitikBongkartoSubmit.append("id_po", detailId);
         dataTitikBongkartoSubmit.append("id_kabupaten_kota", selectedTitikBongkar?.value || "");
         dataTitikBongkartoSubmit.append("alamat_titik_bongkar", formDataTitikBongkar.alamat_titik_bongkar || "");
-        dataTitikBongkartoSubmit.append("jam_bongkar", ""); // Kosong tapi tetap dikirim
+        dataTitikBongkartoSubmit.append("jam_bongkar", ""); 
         dataTitikBongkartoSubmit.append("shareloc", formDataTitikBongkar.shareloc || "");
         dataTitikBongkartoSubmit.append("nama_penerima", formDataTitikBongkar.nama_penerima || "");
         dataTitikBongkartoSubmit.append("nomor_penerima", formDataTitikBongkar.nomor_penerima || "");
@@ -626,7 +626,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                         <label htmlFor="destination" className="form-label">Destination</label>
                         <input className="form-control" type="text" id="destination" name='destination' placeholder="" onChange={handleChange} value={formData.destination || ""} required readOnly />
                     </div>
-                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3 d-none">
                         <label htmlFor="id_armada" className="form-label">Armada</label>
                         <Select
                             id="id_armada"
@@ -638,7 +638,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             required isDisabled
                         />
                     </div>
-                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3 d-none">
                         <label htmlFor="id_driver" className="form-label">Driver</label>
                         <Select
                             id="id_driver"

@@ -14,16 +14,21 @@ const IndexPage = () => {
             navigate("/");
         }
     }, [navigate, token]);
-    
+
     const jeniskendaraanInit = (id) => {
         console.log("Jenis kendaraan dipilih:", id);
-    };    
+    };
 
     const [currentView, setCurrentView] = useState("index");
     const [detailId, setDetailId] = useState(null);
     const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]); // Untuk data hasil pencarian
-    const [searchTerm, setSearchTerm] = useState(""); // State pencarian
+    const [filteredData, setFilteredData] = useState([]);
+    const [filters, setFilters] = useState({
+        nama_jenis_kendaraan: "",
+        nopol_armada: "",
+        status_armada: ""
+    });
+    const [tempFilters, setTempFilters] = useState(filters);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -91,14 +96,16 @@ const IndexPage = () => {
         try {
             const response = await axios.get(`http://localhost:3090/api/v1/armada`, {
                 headers: { Authorization: token },
-                params: { page, limit },
+                params: {
+                    page, limit, nama_jenis_kendaraan: filters.nama_jenis_kendaraan,
+                    nopol_armada: filters.nopol_armada, status_armada: filters.status_armada
+                },
             });
 
             const fetchedData = Array.isArray(response.data.data)
                 ? response.data.data
                 : [response.data.data];
             setData(fetchedData);
-            setFilteredData(fetchedData); // Set data awal ke filteredData juga
             setTotalRecords(response.data.totalData);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -109,19 +116,24 @@ const IndexPage = () => {
 
     useEffect(() => {
         loadData(currentPage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, limit]);
 
     useEffect(() => {
-        // Filter data berdasarkan pencarian
-        const filtered = data.filter(
-            (item) =>
-                item.nama_jenis_kendaraan.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.nopol_armada.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.status_armada.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        setCurrentPage(1); // Reset ke halaman 1 saat filter berubah
+        loadData(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters]); // Fetch ulang data saat filter berubah
+
+    useEffect(() => {
+        const filtered = data.filter((item) => {
+            const matchNamaJenisKendaraan = item.nama_jenis_kendaraan.toLowerCase().includes(filters.nama_jenis_kendaraan.toLowerCase());
+            const matchNopolArmada = item.nopol_armada.toLowerCase().includes(filters.nopol_armada.toLowerCase());
+            const matchStatusArmada = item.status_armada.toLowerCase().includes(filters.status_armada.toLowerCase());
+            return matchNamaJenisKendaraan && matchNopolArmada && matchStatusArmada;
+        });
         setFilteredData(filtered);
-    }, [searchTerm, data]);
+    }, [filters, data]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -134,7 +146,7 @@ const IndexPage = () => {
             jeniskendaraanInit(row.id_jenis_kendaraan); // Inisialisasi jenis kendaraan
         }
     };
-    
+
 
     const handlePageChanges = (page, id = null) => {
         if (id !== null) {
@@ -164,16 +176,45 @@ const IndexPage = () => {
                         </div>
                         {/* Input pencarian */}
                         <div className="col-lg-12 mb-3">
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Cari berdasarkan Nopol, Jenis kendaraan atau Status Armada.."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                            <div className="row">
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Jenis Kendaraan</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.nama_jenis_kendaraan}
+                                        onChange={(e) => setTempFilters({ ...tempFilters, nama_jenis_kendaraan: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Nopol Armada</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.nopol_armada}onChange={(e) => setTempFilters({ ...tempFilters, nopol_armada: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Status Armada</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.status_armada}onChange={(e) => setTempFilters({ ...tempFilters, status_armada: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Proses</label>
+                                    <button
+                                        className="btn btn-primary w-100"
+                                        onClick={() => setFilters(tempFilters)}
+                                    >
+                                        TAMPILKAN
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div className="col-lg-12">
-                            <DataTable
+                        <DataTable
                                 columns={columns}
                                 data={filteredData} // Gunakan data yang sudah difilter
                                 pagination
