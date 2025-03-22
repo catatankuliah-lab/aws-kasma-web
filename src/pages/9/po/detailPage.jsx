@@ -342,7 +342,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
             await axios.put(`http://localhost:3090/api/v1/po/${detailId}`, dataPOtoSubmit, {
                 headers: {
                     Authorization: token,
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": "application/json",
                 },
             });
 

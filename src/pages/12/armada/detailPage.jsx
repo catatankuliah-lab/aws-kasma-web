@@ -126,7 +126,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
             await axios.put(`http://localhost:3090/api/v1/armada/${detailId}`, dataArmadaToSubmit, {
                 headers: {
                     Authorization: token,
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": "application/json",
                 },
             });
 

@@ -158,7 +158,7 @@ const DetailPage = ({ detailId, handleBackClick }) => {
             await axios.post(`http://localhost:3090/api/v1/cicilan`, datatoSubmit, {
                 headers: {
                     Authorization: token,
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": "application/json",
                 }
             });
             Swal.fire({
