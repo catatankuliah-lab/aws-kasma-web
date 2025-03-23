@@ -4,10 +4,21 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import Swal from "sweetalert2";
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, handleBackClick }) => {
     const token = localStorage.getItem('token');
+
+    const modules = {
+        toolbar: [
+            [{ color: [] }, { background: [] }],
+        ],
+    };
+
+    const formats = [
+        "color"
+    ];
 
     const [formData, setFormData] = useState({
         nomor_po: "",
@@ -18,6 +29,8 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         id_armada: "",
         id_driver: "",
         destination: "",
+        origin: "",
+        nama_customer: "",
         status_po: ""
     });
 
@@ -31,7 +44,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         tonase: "",
         rasio_perkalian: "",
         rasio_perkalian_kosong: "",
-        keterangan_rute:""
+        keterangan_rute: ""
     });
 
     const [formDataKosongan, setFormDataKosongan] = useState({
@@ -44,7 +57,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         tonase: "",
         rasio_perkalian: "",
         rasio_perkalian_kosong: "",
-        keterangan_rute:""
+        keterangan_rute: ""
 
     });
 
@@ -83,7 +96,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         if (customerOption.length > 0 && idCustomerInit) {
             const initialValue = customerOption.find(option => option.value === idCustomerInit) || null;
             setSelectedCustomer(initialValue);
-            setOrigin(initialValue.alamat);
+            setOrigin(initialValue?.alamat);
         }
     }, [customerOption, idCustomerInit]);
 
@@ -92,7 +105,8 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         setOrigin(selectedOption.alamat);
         setFormData((prevData) => ({
             ...prevData,
-            id_customer: selectedOption.value // Pastikan id_customer diperbarui
+            id_customer: selectedOption?.value || "",
+            nama_customer: selectedOption?.label || "",
         }));
     };
 
@@ -215,6 +229,8 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                 id_armada: po.id_armada || prevData.id_armada,
                 id_driver: po.id_driver || prevData.id_driver,
                 destination: po.destination || prevData.destination,
+                origin: po.origin || prevData.origin,
+                nama_customer: po.nama_customer || prevData.nama_customer,
                 status_po: po.status_po || prevData.status_po,
             }));
             if (po.kas_jalan.REGULER) {
@@ -272,7 +288,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                     tonase: "0",
                     rasio_perkalian: "0",
                     rasio_perkalian_kosong: "0",
-                    keterangan_rute:""
+                    keterangan_rute: ""
                 }));
             }
         }
@@ -304,7 +320,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
             await axios.put(`http://localhost:3090/api/v1/po/${detailId}`, dataPOtoSubmit, {
                 headers: {
                     Authorization: token,
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": "application/json",
                 },
             });
 
@@ -336,6 +352,26 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         }).format(angka);
     }
 
+    const handleChangeQuillReguler = (value) => {
+        setFormDataReguler((prevData) => ({
+            ...prevData,
+            keterangan_rute: value,
+        }));
+    };
+
+    const handleChangeQuillKosongan = (value) => {
+        setFormDataKosongan((prevData) => ({
+            ...prevData,
+            keterangan_rute: value,
+        }));
+    };
+
+    const handleChangeQuillTitikBongkar = (value) => {
+        setFormDataTitikBongkar((prevData) => ({
+            ...prevData,
+            titik_bongkar: value,
+        }));
+    };
     return (
         <div className="row">
             <div className="col-lg-12">
@@ -391,28 +427,24 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                         <label htmlFor="jam_muat" className="form-label">Jam Muat</label>
                         <input className="form-control" type="time" id="jam_muat" name='jam_muat' onChange={handleChange} value={formData.jam_muat || ""} readOnly required />
                     </div>
-                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
-                        <label htmlFor="id_customer" className="form-label">Customer</label>
-                        <Select
-                            id="id_customer"
-                            name="id_customer"
-                            value={selectedCustomer}
-                            onChange={handleCustomerChange}
-                            options={customerOption}
-                            placeholder="Pilih Customer"
-                            isDisabled
-                            required
+                    <div className="col-md-3 col-sm-12 mb-3">
+                        <label className="form-label">Nama Customer</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={formData.nama_customer}
+                            readOnly
                         />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
-                        <label htmlFor="telpon_kontak_darurat_driver" className="form-label">Origin</label>
-                        <input className="form-control text-uppercase" type="text" readOnly value={origin} />
+                        <label htmlFor="origin" className="form-label">Origin</label>
+                        <input className="form-control text-uppercase" type="text" id="origin" name='origin' readOnly onChange={handleChange} value={formData.origin || ""} />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="destination" className="form-label">Destination</label>
                         <input className="form-control" type="text" id="destination" name='destination' placeholder="" onChange={handleChange} value={formData.destination || ""} readOnly required />
                     </div>
-                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3 d-none">
                         <label htmlFor="id_armada" className="form-label">Armada</label>
                         <Select
                             id="id_armada"
@@ -425,7 +457,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             required
                         />
                     </div>
-                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3">
+                    <div className="col-md-3 col-sm-12 col-sm-12 mb-3 d-none">
                         <label htmlFor="id_driver" className="form-label">Driver</label>
                         <Select
                             id="id_driver"
@@ -506,7 +538,13 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                             </div>
                             <div className="col-md-12 col-sm-12 mb-3">
                                 <label htmlFor="keterangan_rute" className="form-label">Keterangan Rute</label>
-                                <textarea rows={5} className="form-control" id="keterangan_rute" name="keterangan_rute" placeholder="Masukkan keterangan rute" readOnly required value={formDataReguler.keterangan_rute}></textarea>
+                                <ReactQuill
+                                    theme="snow"
+                                    value={formDataReguler.keterangan_rute}
+                                    onChange={handleChangeQuillReguler}
+                                    modules={modules}
+                                    formats={formats}
+                                />
                             </div>
                         </div>
                     )}
@@ -564,7 +602,13 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
 
                             <div className="col-md-12 col-sm-12 mb-3">
                                 <label htmlFor="keterangan_rute" className="form-label">Keterangan Rute</label>
-                                <textarea rows={5} className="form-control" id="keterangan_rute" name="keterangan_rute" placeholder="Masukkan keterangan rute" readOnly required value={formDataKosongan.keterangan_rute}></textarea>
+                                <ReactQuill
+                                    theme="snow"
+                                    value={formDataKosongan.keterangan_rute}
+                                    onChange={handleChangeQuillKosongan}
+                                    modules={modules}
+                                    formats={formats}
+                                />
                             </div>
                         </div>
                     )}

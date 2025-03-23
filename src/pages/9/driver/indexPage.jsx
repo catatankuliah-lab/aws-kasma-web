@@ -17,8 +17,13 @@ const IndexPage = () => {
     const [currentView, setCurrentView] = useState("index");
     const [detailId, setDetailId] = useState(null);
     const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]); // Untuk data hasil pencarian
-    const [searchTerm, setSearchTerm] = useState(""); // State pencarian
+    const [filteredData, setFilteredData] = useState([]);
+    const [filters, setFilters] = useState({
+        nik: "",
+        nama_driver: "",
+        status_driver: ""
+    });
+    const [tempFilters, setTempFilters] = useState(filters);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -85,15 +90,17 @@ const IndexPage = () => {
         try {
             const response = await axios.get(`http://localhost:3090/api/v1/driver`, {
                 headers: { Authorization: token },
-                params: { page, limit },
+                params: { page, limit, nik: filters.nik,
+                    nama_driver: filters.nama_driver,
+                    status_driver: filters.status_driver,
+                 },
             });
 
             const fetchedData = Array.isArray(response.data.data)
                 ? response.data.data
                 : [response.data.data];
-            setData(fetchedData);
-            setFilteredData(fetchedData); // Set data awal ke filteredData juga
-            setTotalRecords(response.data.totalData);
+                setData(fetchedData);
+                setTotalRecords(response.data.totalData);
         } catch (error) {
             console.error("Error fetching data:", error);
         } finally {
@@ -106,19 +113,23 @@ const IndexPage = () => {
     }, [currentPage, limit]);
 
     useEffect(() => {
-        // Filter data berdasarkan pencarian
-        const filtered = data.filter(
-            (item) =>
-                item.nik.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.nama_driver.toLowerCase().includes(searchTerm.toLowerCase()) 
-        );
-        setFilteredData(filtered);
-    }, [searchTerm, data]);
+        setCurrentPage(1); // Reset ke halaman 1 saat filter berubah
+        loadData(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters]); // Fetch ulang data saat filter berubah
 
+    useEffect(() => {
+        const filtered = data.filter((item) => {
+            const matchNik = item.nik.toLowerCase().includes(filters.nik.toLowerCase());
+            const matchNamaDriver = item.nama_driver.toLowerCase().includes(filters.nama_driver.toLowerCase());
+            const matchStatusDriver = item.status_driver.toLowerCase().includes(filters.status_driver.toLowerCase());
+            return matchNik && matchNamaDriver && matchStatusDriver;
+        });
+        setFilteredData(filtered);
+    }, [filters, data]);
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
-
     const handleAddClick = () => setCurrentView("add");
 
     const handleDetailClick = (row) => {
@@ -156,18 +167,46 @@ const IndexPage = () => {
                         </div>
                         <div className="col-lg-12 mb-3">
                         </div>
-                        {/* Input pencarian */}
                         <div className="col-lg-12 mb-3">
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Cari berdasarkan NIK atau Nama Driver..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                            <div className="row">
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">NIK</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.nik}
+                                        onChange={(e) => setTempFilters({ ...tempFilters, nik: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Nama Driver</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.nama_driver}onChange={(e) => setTempFilters({ ...tempFilters, nama_driver: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Status Driver</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={tempFilters.status_driver}onChange={(e) => setTempFilters({ ...tempFilters, status_driver: e.target.value })}
+                                    />
+                                </div>
+                                <div className="col-md-3 col-sm-12 mb-3">
+                                    <label htmlFor="" className="form-label">Proses</label>
+                                    <button
+                                        className="btn btn-primary w-100"
+                                        onClick={() => setFilters(tempFilters)}
+                                    >
+                                        TAMPILKAN
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div className="col-lg-12">
-                            <DataTable
+                        <DataTable
                                 columns={columns}
                                 data={filteredData} // Gunakan data yang sudah difilter
                                 pagination
@@ -188,7 +227,7 @@ const IndexPage = () => {
             )}
             {currentView === "add" && (
                 <AddPage
-                    handlePageChanges={handlePageChanges}
+                    ss={handlePageChanges}
                     handleBackClick={handleBackClick}
                 />
             )}
