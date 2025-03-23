@@ -75,6 +75,11 @@ const AppRoutes = () => {
                     <Route path="/13/po" element={<Role13PO />} />
                 </>
             )}
+            {id_role == "14" && (
+                <>
+                    <Route path="/14/dashboard" element={<DashboardPage />} />
+                </>
+            )}
             <Route path="*" element={<MaintenancePage />} />
         </Routes>
     );

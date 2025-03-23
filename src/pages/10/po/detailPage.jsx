@@ -5,7 +5,6 @@ import Select from 'react-select';
 import Swal from "sweetalert2";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { XCircle } from "lucide-react";
 
 const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, handleBackClick }) => {
     const token = localStorage.getItem('token');
@@ -102,9 +101,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     };
 
     const fetchTitikBongkar = async () => {
-        if (!token) {
-            navigate('/');
-        }
         try {
             const response = await axios.get(`http://localhost:3090/api/v1/titikbongkar/po/${detailId}`, {
                 headers: {
@@ -362,13 +358,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         setFormDataKosongan((prevData) => ({
             ...prevData,
             keterangan_rute: value,
-        }));
-    };
-
-    const handleChangeQuillTitikBongkar = (value) => {
-        setFormDataTitikBongkar((prevData) => ({
-            ...prevData,
-            titik_bongkar: value,
         }));
     };
 
@@ -968,7 +957,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                                             <td>{item.nomor_penerima}</td>
                                             <td className="text-center">
                                                 <button onClick={() => handleDelete(item.id_titik_bongkar)} className="border-0 bg-transparent text-danger">
-                                                    <XCircle size={20} />
+                                                    <i className="bx bx-zoom-in text-priamry"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -984,7 +973,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                 </div>
             </div>
         </div>
-
     );
 };
 

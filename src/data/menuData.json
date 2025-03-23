@@ -179,5 +179,25 @@
             "link": "/13/po",
             "roles": ["13"]
         }]
+    },
+    {
+        "header": "Dashboard",
+        "items": [{
+            "text": "Dashboard",
+            "icon": "bx bx-home",
+            "available": true,
+            "link": "/14/dashboard",
+            "roles": ["14"]
+        }]
+    },
+    {
+        "header": "Armada",
+        "items": [{
+            "text": "Ketersediaan Armada",
+            "icon": "bx bx-file",
+            "available": true,
+            "link": "/14/armada",
+            "roles": ["14"]
+        }]
     }
 ]
