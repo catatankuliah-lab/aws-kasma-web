@@ -87,11 +87,28 @@ const IndexPage = () => {
             width: "200px",
         },
         {
-            name: "Status PO",
-            selector: (row) => row.status_po,
-            sortable: true,
-            width: "200px",
+            name: "",
+            selector: (row) => (
+                <a onClick={() => handleDetailClick(row)} className="btn btn-link">
+                    ${row.status_po}
+                </a>
+            ),
+            sortable: false,
+            width: "100px",
+            style: {
+                textAlign: "center",
+            },
         },
+        // {
+        //     name: "Status PO",
+        //     selector: (row) => (
+        //         <a>
+        //             ${row.status_po}
+        //         </a>
+        //         ),
+        //     sortable: true,
+        //     width: "200px",
+        // },
         {
             name: "",
             selector: (row) => (
@@ -276,7 +293,7 @@ const IndexPage = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        value={tempFilters.customer}onChange={(e) => setTempFilters({ ...tempFilters, nama_customer: e.target.value })}
+                                        value={tempFilters.customer} onChange={(e) => setTempFilters({ ...tempFilters, nama_customer: e.target.value })}
                                     />
                                 </div>
                                 <div className="col-md-3 col-sm-12 mb-3">

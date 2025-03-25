@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import DetailPage from "./detailPage";
+import DetailDropPage from "./detailDropPage";
 import { useNavigate } from "react-router-dom";
 
 const IndexPage = () => {
@@ -128,16 +129,6 @@ const IndexPage = () => {
             navigate("/");
         }
         try {
-            console.log(id_user,
-                page,
-                limit,
-                filters.nomor_po,
-                filters.customer,
-                filters.nopol_armada,
-                filters.nama_driver,
-                filters.startDate,
-                filters.endDate,
-                filters.status_po);
             const response = await axios.get(`http://localhost:3090/api/v1/po/driver/${id_user}`, {
                 headers: { Authorization: token },
                 params: {
@@ -153,7 +144,7 @@ const IndexPage = () => {
                     status_po: filters.status_po
                 },
             });
-            
+
             const fetchedData = Array.isArray(response.data.data)
                 ? response.data.data
                 : [response.data.data];
@@ -214,6 +205,16 @@ const IndexPage = () => {
         }
     };
 
+    const handleDetailDropClick = (id_titik_bongkar) => {
+        if (id_titik_bongkar) {
+            setDetailId(id_titik_bongkar,urutan);
+            setCurrentView("detaildrop");
+        } else {
+            console.warn("ID Titik Bongkar undefined atau null!");
+        }
+    };
+
+
     const handlePageChanges = (page, id = null) => {
         if (id !== null) {
             setDetailId(id);
@@ -248,18 +249,6 @@ const IndexPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-lg-12 mb-3">
-                            <div className="">
-                                Klik{" "}
-                                <button
-                                    className="fw-bold btn btn-link p-0"
-                                    onClick={() => handleAddClick()}
-                                >
-                                    disini
-                                </button>{" "}
-                                untuk menambahkan Purchase Order.
-                            </div>
-                        </div>
                         <div className="col-lg-12 mt-2">
                             <div className="mb-3">
                                 <div className="divider text-start">
@@ -286,7 +275,7 @@ const IndexPage = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        value={tempFilters.customer}onChange={(e) => setTempFilters({ ...tempFilters, nama_customer: e.target.value })}
+                                        value={tempFilters.customer} onChange={(e) => setTempFilters({ ...tempFilters, nama_customer: e.target.value })}
                                     />
                                 </div>
                                 <div className="col-md-3 col-sm-12 mb-3">
@@ -378,6 +367,15 @@ const IndexPage = () => {
                     idArmadaInit={idArmadaInit}
                     idDriverInit={idDriverInit}
                     handleBackClick={handleBackClick}
+                    handleDetailDropClick={handleDetailDropClick}
+                />
+            )}
+            {currentView === "detaildrop" && (
+                <DetailDropPage
+                    detailId={detailId}
+                    handleBackClick={handleBackClick}
+                    handleDetailDropClick={handleDetailDropClick}
+
                 />
             )}
         </div>

@@ -67,7 +67,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                     Authorization: token
                 }
             });
-            console.log(response.data.data[0]);
             if (response.data.data.length !== 0) {
                 const datafetch = response.data.data.map(dataitem => ({
                     alamat_titik_bongkar: dataitem.alamat_titik_bongkar,
@@ -76,7 +75,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                     nomor_penerima: dataitem.nomor_penerima
                 }));
                 setTitikBongkar(datafetch);
-                console.log(datafetch);
             } else {
                 setTitikBongkar([]);
             }
@@ -88,11 +86,14 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
-                const response = await axios.get('http://localhost:3090/api/v1/customer', {
+                const response = await axios.get('http://localhost:3090/api/v1/customer?limit=1000', {
                     headers: {
                         Authorization: token
                     }
+
                 });
+
+
                 if (response.data.data.length != 0) {
                     const datafetch = response.data.data.map(dataitem => ({
                         value: dataitem.id_customer,
@@ -113,11 +114,11 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
 
     useEffect(() => {
         if (customerOption.length > 0 && idCustomerInit) {
-            const initialValue = customerOption.find(option => option.value === idCustomerInit) || null;
+            const initialValue = customerOption.find(option => option.value == idCustomerInit) || null; // pakai ==
             setSelectedCustomer(initialValue);
-            // setOrigin(initialValue.alamat);
         }
     }, [customerOption, idCustomerInit]);
+
 
     const handleCustomerChange = (selectedOption) => {
         setSelectedCustomer(selectedOption);
@@ -244,7 +245,6 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         if (po) {
             po.kas_jalan = typeof po.kas_jalan === "string" ? JSON.parse(po.kas_jalan) : po.kas_jalan;
-            console.log(po.kas_jalan);
             setFormData((prevData) => ({
                 nomor_po: po.nomor_po || prevData.nomor_po,
                 tanggal_po: po.tanggal_po || prevData.tanggal_po,

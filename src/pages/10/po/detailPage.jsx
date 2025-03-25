@@ -28,6 +28,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
         id_armada: "",
         id_driver: "",
         destination: "",
+        origin: "",
         status_po: ""
     });
 
@@ -143,6 +144,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                 id_armada: po.id_armada || prevData.id_armada,
                 id_driver: po.id_driver || prevData.id_driver,
                 destination: po.destination || prevData.destination,
+                origin: po.origin || prevData.origin,
                 status_po: po.status_po || prevData.status_po,
             }));
         }
@@ -151,7 +153,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
-                const response = await axios.get('http://localhost:3090/api/v1/customer', {
+                const response = await axios.get('http://localhost:3090/api/v1/customer?limit=1000', {
                     headers: {
                         Authorization: token
                     }
@@ -175,16 +177,22 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
     }, [token]);
 
     useEffect(() => {
+        console.log("customerOption:", customerOption);
+        console.log("idCustomerInit:", idCustomerInit);
         if (customerOption.length > 0 && idCustomerInit) {
             const initialValue = customerOption.find(option => option.value === idCustomerInit) || null;
             setSelectedCustomer(initialValue);
-            setOrigin(initialValue.alamat);
+            // setOrigin(initialValue.alamat);
         }
     }, [customerOption, idCustomerInit]);
 
-    const handleCustomerChange = async (selectedOption) => {
+    const handleCustomerChange = (selectedOption) => {
         setSelectedCustomer(selectedOption);
         setOrigin(selectedOption.alamat);
+        setFormData((prevData) => ({
+            ...prevData,
+            id_customer: selectedOption.value // Pastikan id_customer diperbarui
+        }));
     };
 
     const [armadaOption, setArmadaOption] = useState([]);
@@ -609,7 +617,7 @@ const DetailPage = ({ detailId, idCustomerInit, idArmadaInit, idDriverInit, hand
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="telpon_kontak_darurat_driver" className="form-label">Origin</label>
-                        <input className="form-control text-uppercase" type="text" readOnly value={origin} />
+                        <input className="form-control text-uppercase" type="text" readOnly value={formData.origin || ""} />
                     </div>
                     <div className="col-md-3 col-sm-12 mb-3">
                         <label htmlFor="destination" className="form-label">Destination</label>
